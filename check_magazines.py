@@ -55,6 +55,7 @@ def parse_block(block):
         return None
     num_m = re.search(r"N° de parution\s*:</span>\s*([^<\s]+)", block)
     paru_m = re.search(r"Paru le\s*:</span>\s*([^<\s]+)", block)
+    prix_m = re.search(r"Prix :</span>\s*([0-9.,]+\s*€)", block)
     img_m = re.search(r'<img src="([^"]+/parutions/[^"]+)"', block)
     href_m = re.search(r'href="(/magazine/\d+_([a-z0-9-]+)[^"]*)"', block)
     alt_m = re.search(r'<img src="[^"]+/parutions/[^"]+"\s+alt="([^"]+)"', block)
@@ -68,6 +69,7 @@ def parse_block(block):
         "codif": codif_m.group(1),
         "numero": num_m.group(1) if num_m else None,
         "date_entree": paru_m.group(1) if paru_m else None,
+        "prix": re.sub(r"\s+", " ", prix_m.group(1)).strip() if prix_m else None,
         "cover_url": cover_url,
         "url": SITE_BASE + href_m.group(1) if href_m else SITE_BASE,
         "slug": href_m.group(2) if href_m else "",
@@ -161,6 +163,8 @@ def send_discord(name, emoji, color, info):
         embed["fields"].append({"name": "📅 En kiosque depuis", "value": info["date_entree"], "inline": True})
     if info.get("date_sortie"):
         embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_sortie"], "inline": True})
+    if info.get("prix"):
+        embed["fields"].append({"name": "💶 Prix", "value": info["prix"], "inline": True})
     if info["cover_url"]:
         embed["image"] = {"url": info["cover_url"]}
 
@@ -221,6 +225,7 @@ def main():
             "numero": numero,
             "date_entree": info["date_entree"],
             "date_sortie": info["date_sortie"],
+            "prix": info.get("prix"),
             "detected_at": datetime.utcnow().isoformat(),
         }
         updated = True
