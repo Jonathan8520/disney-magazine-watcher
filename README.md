@@ -4,20 +4,22 @@ Surveille les nouvelles sorties des magazines Disney/Picsou sur `direct-editeurs
 
 ## Magazines surveillés
 
-| Magazine | Fréquence |
-|---|---|
-| 💰 Picsou Magazine | Bimestriel |
-| 🦆 Super Picsou Géant | Bimestriel |
-| 🐭 Journal de Mickey | Hebdomadaire |
-| ⭐ Journal de Mickey HS | Irrégulier |
-| 🦸 Les Chroniques de Fantomiald | Bimestriel |
-| 💎 Les Trésors de Picsou | Trimestriel |
-| 🧒 Mickey Junior | Mensuel |
-| 🏆 Le Meilleur du Journal de Mickey | Trimestriel |
-| 📘 Picsou HS Collection Deluxe | Irrégulier |
-| 🦫 Picsou HS Castors Juniors | Irrégulier |
-| ⛏️ Picsou HS Souvenirs du Klondike | Irrégulier |
-| 🎂 Picsou Anniversaire en or | Irrégulier |
+Le watcher **découvre automatiquement** tous les magazines Disney en interrogeant `direct-editeurs.fr` avec les mots-clés `picsou`, `mickey`, `fantomiald`, `donald`. Aucune liste à maintenir : un nouveau hors-série Disney apparaît dans le catalogue → il sera notifié au run suivant.
+
+Magazines principaux (avec emoji/couleur dédiés via `OVERRIDES` dans `check_magazines.py`) :
+
+| Magazine |
+|---|
+| 💰 Picsou Magazine |
+| 🦆 Super Picsou Géant |
+| 🐭 Journal de Mickey |
+| ⭐ Journal de Mickey HS |
+| 🦸 Les Chroniques de Fantomiald |
+| 💎 Les Trésors de Picsou |
+| 🧒 Mickey Junior |
+| 🏆 Le Meilleur du Journal de Mickey |
+
+Tous les autres magazines / HS découverts sont notifiés avec un emoji 🦆 par défaut.
 
 ## Setup (5 minutes)
 
@@ -49,11 +51,19 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 - Si nouveau numéro → notification Discord avec titre, date de parution et couverture
 - Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
 
-## Ajouter un magazine
+## Personnaliser un magazine
 
-Dans `check_magazines.py`, ajoute une entrée dans `MAGAZINES` :
+Pour donner un emoji et une couleur dédiés à un magazine découvert automatiquement, ajoute son codif à `OVERRIDES` dans `check_magazines.py` :
+
 ```python
-{"name": "Nom du magazine", "codif": "12345", "emoji": "📰", "color": 0xFF0000},
+OVERRIDES = {
+    "12345": {"name": "Nom affiché", "emoji": "📰", "color": 0xFF0000},
+    ...
+}
 ```
 
-Pour trouver le `codif` d'un magazine, cherche-le sur `direct-editeurs.fr/nos-magazines` : c'est l'identifiant numérique visible dans l'URL du magazine et dans le bloc "Codif :" de sa page.
+Le codif est l'identifiant numérique visible dans l'URL et le bloc "Codif :" sur `direct-editeurs.fr`.
+
+## Élargir la couverture
+
+Pour suivre d'autres familles de magazines, modifie `KEYWORDS` dans `check_magazines.py` (par défaut : `picsou`, `mickey`, `fantomiald`, `donald`).
