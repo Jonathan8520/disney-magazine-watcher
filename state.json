@@ -198,5 +198,21 @@
     "date_sortie": "12/06/2026",
     "prix": "8,50 €",
     "detected_at": "2026-05-04T22:29:33.535857"
+  },
+  "14268": {
+    "name": "LES INCONTOURNABLES DE DISNEY",
+    "numero": "7",
+    "date_entree": "04/03/2026",
+    "date_sortie": "02/06/2026",
+    "prix": "7,99 €",
+    "detected_at": "2026-05-04T22:40:01.011142"
+  },
+  "19064": {
+    "name": "LES INCONTOURNABLES REV",
+    "numero": "3H",
+    "date_entree": "21/01/2026",
+    "date_sortie": "22/04/2026",
+    "prix": "7,99 €",
+    "detected_at": "2026-05-04T22:40:02.159475"
   }
 }
