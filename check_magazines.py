@@ -32,29 +32,31 @@ def fetch_magazine(tit_code):
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Titre complet (ex: "PICSOU MAGAZINE n°593")
-    h2 = soup.find("h2")
-    title_span = h2.find("span") if h2 else None
-    full_title = title_span.get_text(strip=True) if title_span else ""
+    # Nom du magazine (ex: "PICSOU MAGAZINE") — span id se termine par "_tit1"
+    name_span = soup.find("span", id=lambda x: x and x.endswith("_tit1"))
+    mag_name = name_span.get_text(strip=True) if name_span else ""
 
-    # Numéro
-    num_match = re.search(r"n°\s*(\d+)", full_title, re.IGNORECASE)
+    # Numéro (ex: "N°593H" → "593") — span id se termine par "_num"
+    num_span = soup.find("span", id=lambda x: x and x.endswith("_num"))
+    num_text = num_span.get_text(strip=True) if num_span else ""
+    num_match = re.search(r"(\d+[A-Z]*)", num_text)
     numero = num_match.group(1) if num_match else None
 
-    # Date d'entrée en kiosque
+    full_title = f"{mag_name} N°{numero}" if mag_name and numero else (mag_name or num_text)
+
+    # Dates (jour/mois/année peuvent manquer individuellement)
     def get_date(day_id, month_id, year_id):
-        d = soup.find("span", id=lambda x: x and day_id in x)
-        m = soup.find("span", id=lambda x: x and month_id in x)
-        y = soup.find("span", id=lambda x: x and year_id in x)
-        if d and m and y:
-            return f"{d.text.strip()}/{m.text.strip()}/{y.text.strip()}"
-        return None
+        d = soup.find("span", id=lambda x: x and x.endswith(day_id))
+        m = soup.find("span", id=lambda x: x and x.endswith(month_id))
+        y = soup.find("span", id=lambda x: x and x.endswith(year_id))
+        parts = [s.text.strip() for s in (d, m, y) if s and s.text.strip()]
+        return "/".join(parts) if parts else None
 
     date_entree = get_date("spanJe", "spanMe", "spanAe")
     date_sortie = get_date("spanJs", "spanMs", "spanAs")
 
-    # Image de couverture
-    img = soup.find("img", id=lambda x: x and "imgCouverture" in (x or ""))
+    # Image de couverture (id="couverture_1" sur la page produit)
+    img = soup.find("img", id="couverture_1")
     cover_url = None
     if img and img.get("src"):
         src = img["src"]
