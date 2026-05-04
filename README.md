@@ -12,7 +12,6 @@ Surveille les nouvelles sorties des magazines Disney/Picsou sur MLP et envoie un
 | ⭐ Journal de Mickey HS | Irrégulier |
 | 🦸 Fantomiald | Bimestriel |
 | 💎 Les Trésors de Picsou | Trimestriel |
-| 🌟 Mon 1er Journal de Mickey | Irrégulier |
 
 ## Setup (5 minutes)
 

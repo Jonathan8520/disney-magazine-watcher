@@ -14,7 +14,6 @@ MAGAZINES = [
     {"name": "Journal de Mickey HS",     "tit_code": "sIixRZCuH84=",  "emoji": "⭐", "color": 0xCC0000},
     {"name": "Fantomiald",               "tit_code": "l4QEZfnUEIk=",  "emoji": "🦸", "color": 0x6A0DAD},
     {"name": "Les Trésors de Picsou",    "tit_code": "6suANHFJ4cU=",  "emoji": "💎", "color": 0x1E90FF},
-    {"name": "Mon 1er Journal de Mickey","tit_code": "bR3wPNssFY4=",  "emoji": "🌟", "color": 0xFF69B4},
 ]
 
 BASE_URL = "https://catalogueproduits.mlp.fr/produit.aspx?tit_code={}"
@@ -32,23 +31,42 @@ def fetch_magazine(tit_code):
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Nom du magazine (ex: "PICSOU MAGAZINE") — span id se termine par "_tit1"
+    # Nom du magazine (ex: "PICSOU MAGAZINE") — span id se termine par "_tit1".
+    # Si absent, c'est qu'on n'est pas sur une page produit (tit_code obsolète →
+    # MLP redirige vers la page d'accueil) : on lève pour ne pas scraper la home.
     name_span = soup.find("span", id=lambda x: x and x.endswith("_tit1"))
-    mag_name = name_span.get_text(strip=True) if name_span else ""
+    if not name_span:
+        raise ValueError(
+            "Page produit introuvable (tit_code probablement obsolète, MLP a renvoyé l'accueil)"
+        )
+    mag_name = name_span.get_text(strip=True)
 
-    # Numéro (ex: "N°593H" → "593") — span id se termine par "_num"
-    num_span = soup.find("span", id=lambda x: x and x.endswith("_num"))
+    # Numéro (ex: "N°593H" → "593") : on prend le _num du bloc produit
+    # principal (id préfixé par ContentPlaceHolder1_), pas ceux des widgets
+    # latéraux comme ContentCentral_sortiesJour_*.
+    num_span = soup.find(
+        "span",
+        id=lambda x: x and x.startswith("ContentPlaceHolder1_") and x.endswith("_num"),
+    )
     num_text = num_span.get_text(strip=True) if num_span else ""
     num_match = re.search(r"(\d+[A-Z]*)", num_text)
     numero = num_match.group(1) if num_match else None
 
     full_title = f"{mag_name} N°{numero}" if mag_name and numero else (mag_name or num_text)
 
-    # Dates (jour/mois/année peuvent manquer individuellement)
+    # Dates (jour/mois/année peuvent manquer individuellement).
+    # La casse des suffixes varie côté MLP (ex: 'spanje' minuscule pour le jour
+    # d'entrée), donc on compare en lower-case.
     def get_date(day_id, month_id, year_id):
-        d = soup.find("span", id=lambda x: x and x.endswith(day_id))
-        m = soup.find("span", id=lambda x: x and x.endswith(month_id))
-        y = soup.find("span", id=lambda x: x and x.endswith(year_id))
+        def find_suffix(suffix):
+            s = suffix.lower()
+            return soup.find(
+                "span",
+                id=lambda x: x and x.startswith("ContentPlaceHolder1_") and x.lower().endswith(s),
+            )
+        d = find_suffix(day_id)
+        m = find_suffix(month_id)
+        y = find_suffix(year_id)
         parts = [s.text.strip() for s in (d, m, y) if s and s.text.strip()]
         return "/".join(parts) if parts else None
 
