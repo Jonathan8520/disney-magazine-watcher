@@ -78,10 +78,10 @@ def parse_block(block):
         "site_name": html.unescape(alt_m.group(1)) if alt_m else "",
     }
 
-def discover():
-    """Recherche tous les magazines Disney via les mots-clés, dédoublonne par codif.
-    Les magazines marqués 'Trop vieux' (date passée) sont ignorés : ils sont sortis
-    du catalogue et ne peuvent plus avoir de nouveau numéro."""
+def discover_de():
+    """Recherche tous les magazines Disney sur Direct Éditeurs via les mots-clés.
+    Les pochettes promo et les magazines marqués 'Trop vieux' (date passée) sont
+    ignorés."""
     s = get_session()
     today = datetime.now().date()
     by_codif = {}
@@ -103,26 +103,52 @@ def discover():
                 if datetime(int(y), int(m), int(d)).date() < today:
                     continue
             by_codif.setdefault(info["codif"], info)
-    return list(by_codif.values())
+    return by_codif
 
-# ── MLP : enrichissement avec la date de relève prévisionnelle ────────────────
-# Direct Éditeurs ne renseigne pas le "Relevé le" tant que le numéro est en
-# vente. MLP, lui, expose une date prévisionnelle. On l'interroge uniquement
-# pour les nouveaux numéros (donc 0–2 fois par run en régime de croisière).
-def fetch_mlp_release_date(codif):
+def discover():
+    """Découverte hybride : Direct Éditeurs (riche, structuré) + MLP en complément
+    pour les magazines que DE n'indexe pas (ex: Picsou Soir, Destin de Picsou).
+    Les codifs uniquement présents sur MLP sont enrichis via fetch_mlp_product."""
+    de_results = discover_de()
+    mlp_codifs = discover_mlp()
+    extras = mlp_codifs - de_results.keys()
+    if extras:
+        print(f"   ⤷ {len(extras)} magazines MLP-only à enrichir : {', '.join(sorted(extras))}")
+    for codif in extras:
+        info = fetch_mlp_product(codif)
+        if info:
+            de_results[codif] = info
+    return list(de_results.values())
+
+# ── MLP : page produit (utilisée pour l'enrichissement et le fallback) ────────
+# Sert pour deux cas :
+#   - récupérer la date de relève prévisionnelle (DE ne l'a jamais pour la parution
+#     courante)
+#   - scraper toutes les infos d'un magazine MLP-only (que DE n'indexe pas, ex:
+#     Picsou Soir codif 18658)
+def _mlp_session():
+    s = requests.Session()
+    s.headers.update(HEADERS)
+    r0 = s.get(MLP_URL, timeout=15)
+    def vs(name):
+        m = re.search(rf'name="{name}"[^>]*value="([^"]*)"', r0.text)
+        return m.group(1) if m else ""
+    return s, {
+        "__VIEWSTATE": vs("__VIEWSTATE"),
+        "__VIEWSTATEGENERATOR": vs("__VIEWSTATEGENERATOR"),
+        "__EVENTVALIDATION": vs("__EVENTVALIDATION"),
+    }
+
+def fetch_mlp_product(codif):
+    """POST recherche MLP par codif → page produit.
+    Retourne un dict (codif, site_name, numero, date_entree, date_sortie, prix,
+    cover_url, url, slug, expired_on) ou None si introuvable."""
     try:
-        s = requests.Session()
-        s.headers.update(HEADERS)
-        r0 = s.get(MLP_URL, timeout=15)
-        def vs(name):
-            m = re.search(rf'name="{name}"[^>]*value="([^"]*)"', r0.text)
-            return m.group(1) if m else ""
+        s, viewstate = _mlp_session()
         data = {
             "__EVENTTARGET": "",
             "__EVENTARGUMENT": "",
-            "__VIEWSTATE": vs("__VIEWSTATE"),
-            "__VIEWSTATEGENERATOR": vs("__VIEWSTATEGENERATOR"),
-            "__EVENTVALIDATION": vs("__EVENTVALIDATION"),
+            **viewstate,
             "ctl00$searchBar$txtSearchByTitre": "",
             "ctl00$searchBar$txtSearchByCode": codif,
             "ctl00$searchBar$imgSearchValide.x": "5",
@@ -132,18 +158,77 @@ def fetch_mlp_release_date(codif):
         }
         r1 = s.post(MLP_URL, data=data, timeout=15, allow_redirects=True)
         if "tit_code" not in r1.url:
-            return None  # MLP n'a pas redirigé vers une page produit
+            return None
+        text = r1.text
         def find(suffix):
             m = re.search(
                 rf'id="ContentPlaceHolder1_[^"]*{suffix}"[^>]*>([^<]+)</span>',
-                r1.text, re.IGNORECASE,
+                text, re.IGNORECASE,
             )
             return m.group(1).strip() if m else None
-        d, mo, y = find("spanJs"), find("spanMs"), find("spanAs")
-        return f"{d}/{mo}/{y}" if (d and mo and y) else None
+        def date(j, mo, y):
+            jj, mm, yy = find(j), find(mo), find(y)
+            return f"{jj}/{mm}/{yy}" if (jj and mm and yy) else None
+        # Cover image
+        img_m = re.search(r'<img[^>]+id="couverture_1"[^>]+src="([^"]+)"', text)
+        cover = None
+        if img_m:
+            src = img_m.group(1)
+            cover = src if src.startswith("http") else "https://catalogueproduits.mlp.fr/" + src.lstrip("/")
+        # Numéro : extrait juste les chiffres + suffixe alpha (ex N°593H → 593H)
+        num_raw = find("_num") or ""
+        num_match = re.search(r"(\d+[A-Z]*)", num_raw)
+        return {
+            "codif": codif,
+            "site_name": find("_tit1") or "",
+            "numero": num_match.group(1) if num_match else None,
+            "date_entree": date("spanJe", "spanMe", "spanAe"),
+            "date_sortie": date("spanJs", "spanMs", "spanAs"),
+            "prix": find("_prix"),
+            "cover_url": cover,
+            "url": r1.url,
+            "slug": "",
+            "expired_on": None,
+        }
     except Exception as e:
         print(f"  ⚠️  Lookup MLP échoué pour codif {codif} : {e}")
         return None
+
+def discover_mlp():
+    """Recherche MLP par chaque mot-clé, dédoublonne par codif, renvoie un set
+    de codifs. On ne récupère que les identifiants ; les infos détaillées seront
+    ensuite chargées via fetch_mlp_product() pour les codifs MLP-only."""
+    try:
+        s, viewstate = _mlp_session()
+        codifs = set()
+        for kw in KEYWORDS:
+            data = {
+                "__EVENTTARGET": "",
+                "__EVENTARGUMENT": "",
+                **viewstate,
+                "ctl00$searchBar$txtSearchByTitre": kw,
+                "ctl00$searchBar$txtSearchByCode": "",
+                "ctl00$searchBar$imgSearchValide.x": "5",
+                "ctl00$searchBar$imgSearchValide.y": "5",
+                "ctl00$searchBar$txtMisEnVenteDu": "",
+                "ctl00$searchBar$txtMisEnVenteAu": "",
+            }
+            r = s.post(MLP_URL, data=data, timeout=15, allow_redirects=True)
+            for m in re.finditer(
+                r'<span id="[^"]*_titre">([^<]+)</span>\s*</p>\s*'
+                r'<p[^>]*>\s*<span id="[^"]*_titCode">(\d+)</span>',
+                r.text,
+            ):
+                titre, codif = m.group(1).strip(), m.group(2)
+                # Skip pochettes et bundles "AVEC + PRODU" (équivalent de SKIP_SLUGS sur DE).
+                t = titre.upper()
+                if t.startswith("POCH") or "+ PRODU" in t:
+                    continue
+                codifs.add(codif)
+        return codifs
+    except Exception as e:
+        print(f"⚠️  discover_mlp échoué : {e}")
+        return set()
 
 # ── State ─────────────────────────────────────────────────────────────────────
 def load_state():
@@ -200,7 +285,7 @@ def main():
     state = load_state()
     updated = False
 
-    print("🔎 Découverte des magazines Disney sur direct-editeurs.fr…")
+    print("🔎 Découverte des magazines Disney (Direct Éditeurs + MLP)…")
     magazines = discover()
     print(f"   {len(magazines)} magazines trouvés\n")
 
@@ -223,7 +308,11 @@ def main():
             continue
 
         print(f"  🆕 Nouveau numéro : n°{numero} (précédent : {last_known})")
-        info["date_sortie"] = fetch_mlp_release_date(codif)
+        # date_sortie peut déjà être renseignée si l'info vient de fetch_mlp_product
+        # (cas des magazines MLP-only). Sinon on fait le lookup MLP maintenant.
+        if not info.get("date_sortie"):
+            mlp_info = fetch_mlp_product(codif)
+            info["date_sortie"] = mlp_info.get("date_sortie") if mlp_info else None
         try:
             send_discord(name, emoji, color, info)
         except Exception as e:
