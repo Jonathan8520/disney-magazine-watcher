@@ -40,9 +40,9 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 
 - Le script tourne **toutes les 12h** (8h et 20h heure de Paris)
 - Il scrape `catalogueproduits.mlp.fr` pour chaque magazine
-- Il compare le numéro actuel avec le dernier connu (stocké dans `state.json`)
+- Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
 - Si nouveau numéro → notification Discord avec titre, dates et couverture
-- Le `state.json` est automatiquement mis à jour et commité dans le repo
+- Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
 
 ## Ajouter un magazine
 

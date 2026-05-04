@@ -1,0 +1,52 @@
+name: Disney Magazine Watcher 🦆
+
+on:
+  schedule:
+    # Toutes les 12h (6h et 18h UTC = 8h et 20h Paris)
+    - cron: "0 6,18 * * *"
+  workflow_dispatch: # Permet de lancer manuellement
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Nécessaire pour push sur la branche datas
+
+    steps:
+      # Checkout main pour le code
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # Récupérer state.json depuis la branche datas
+      - name: Get state.json from datas
+        run: |
+          git fetch origin datas
+          git checkout origin/datas -- state.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run watcher
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python check_magazines.py
+
+      # Commit state.json sur la branche datas
+      - name: Push state.json to datas
+        run: |
+          cp state.json /tmp/state.json
+          git checkout datas
+          cp /tmp/state.json state.json
+          git add state.json
+          git diff --cached --quiet && exit 0
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Update state.json"
+          git push origin datas
