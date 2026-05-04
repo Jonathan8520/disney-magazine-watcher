@@ -1,1 +1,44 @@
-{}
+{
+  "Picsou Magazine": {
+    "numero": "593H",
+    "full_title": "PICSOU MAGAZINE N°593H",
+    "date_entree": "19/03/2026",
+    "date_sortie": "18/05/2026",
+    "detected_at": "2026-05-04T20:55:37.233376"
+  },
+  "Super Picsou Géant": {
+    "numero": "253",
+    "full_title": "SUPER PICSOU GEANT N°253",
+    "date_entree": "11/03/2026",
+    "date_sortie": "10/05/2026",
+    "detected_at": "2026-05-04T20:55:39.589191"
+  },
+  "Journal de Mickey": {
+    "numero": "3854",
+    "full_title": "JOURNAL DE MICKEY N°3854",
+    "date_entree": "29/04/2026",
+    "date_sortie": "13/05/2026",
+    "detected_at": "2026-05-04T20:55:41.498809"
+  },
+  "Journal de Mickey HS": {
+    "numero": "12H",
+    "full_title": "JOURNAL DE MICKEY (LE) HS N°12H",
+    "date_entree": "14/03/2026",
+    "date_sortie": "12/06/2026",
+    "detected_at": "2026-05-04T20:55:43.336726"
+  },
+  "Fantomiald": {
+    "numero": "37",
+    "full_title": "FANTOMIALD N°37",
+    "date_entree": "11/02/2026",
+    "date_sortie": "12/05/2026",
+    "detected_at": "2026-05-04T20:55:45.160461"
+  },
+  "Les Trésors de Picsou": {
+    "numero": "74",
+    "full_title": "TRESORS DE PICSOU (LES) N°74",
+    "date_entree": "14/03/2026",
+    "date_sortie": "12/06/2026",
+    "detected_at": "2026-05-04T20:55:46.930162"
+  }
+}
