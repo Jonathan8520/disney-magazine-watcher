@@ -88,5 +88,41 @@
     "numero": "3H",
     "date_entree": "05/02/2025",
     "detected_at": "2026-05-04T21:40:16.631326"
+  },
+  "18288": {
+    "name": "PICSOU MAGAZINE HS CASTORS JUNIORS",
+    "numero": "7H",
+    "date_entree": "15/10/2025",
+    "detected_at": "2026-05-04T21:43:42.880093"
+  },
+  "19603": {
+    "name": "PICSOU MAGAZINE HS SOUVENIRS DU KLONDIKE",
+    "numero": "1H",
+    "date_entree": "10/10/2025",
+    "detected_at": "2026-05-04T21:43:44.103652"
+  },
+  "14067": {
+    "name": "Journal de Mickey",
+    "numero": "3854",
+    "date_entree": "29/04/2026",
+    "detected_at": "2026-05-04T21:43:45.498437"
+  },
+  "15528": {
+    "name": "Mickey Junior",
+    "numero": "488",
+    "date_entree": "23/04/2026",
+    "detected_at": "2026-05-04T21:43:46.678580"
+  },
+  "15935": {
+    "name": "Le Meilleur du Journal de Mickey",
+    "numero": "25",
+    "date_entree": "01/04/2026",
+    "detected_at": "2026-05-04T21:43:47.941157"
+  },
+  "18875": {
+    "name": "MICKEY JUNIOR HS BABY",
+    "numero": "3H",
+    "date_entree": "04/02/2026",
+    "detected_at": "2026-05-04T21:43:49.076886"
   }
 }
