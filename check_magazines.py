@@ -169,12 +169,15 @@ def fetch_mlp_product(codif):
         def date(j, mo, y):
             jj, mm, yy = find(j), find(mo), find(y)
             return f"{jj}/{mm}/{yy}" if (jj and mm and yy) else None
-        # Cover image
-        img_m = re.search(r'<img[^>]+id="couverture_1"[^>]+src="([^"]+)"', text)
+        # Cover image — l'ordre des attributs varie (src avant ou après id),
+        # donc on extrait le tag entier puis le src à l'intérieur.
+        img_tag = re.search(r'<img[^>]*id="couverture_1"[^>]*>', text)
         cover = None
-        if img_m:
-            src = img_m.group(1)
-            cover = src if src.startswith("http") else "https://catalogueproduits.mlp.fr/" + src.lstrip("/")
+        if img_tag:
+            src_m = re.search(r'src="([^"]+)"', img_tag.group(0))
+            if src_m:
+                src = src_m.group(1)
+                cover = src if src.startswith("http") else "https://catalogueproduits.mlp.fr/" + src.lstrip("/")
         # Numéro : extrait juste les chiffres + suffixe alpha (ex N°593H → 593H)
         num_raw = find("_num") or ""
         num_match = re.search(r"(\d+[A-Z]*)", num_raw)
@@ -245,12 +248,13 @@ def save_state(state):
 def send_discord(name, emoji, color, info):
     title_tail = info["site_name"] or name
     full_title = f"{title_tail} N°{info['numero']}" if info["numero"] else title_tail
+    source = "catalogueproduits.mlp.fr" if "mlp.fr" in info["url"] else "direct-editeurs.fr"
     embed = {
         "title": f"{emoji} {full_title}",
         "url": info["url"],
         "color": color,
         "fields": [],
-        "footer": {"text": "Source : direct-editeurs.fr"},
+        "footer": {"text": f"Source : {source}"},
         "timestamp": datetime.utcnow().isoformat(),
     }
     if info["date_entree"]:
