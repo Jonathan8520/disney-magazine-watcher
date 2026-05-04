@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+import time
 import requests
 from datetime import datetime
 
@@ -124,8 +125,18 @@ def send_discord(name, emoji, color, info):
         "content": f"🆕 **Nouveau numéro disponible !** — {name}",
         "embeds": [embed],
     }
-    r = requests.post(DISCORD_WEBHOOK, json=payload, timeout=10)
-    r.raise_for_status()
+    # Discord webhook limit ~5 req/s : on retry sur 429 en respectant Retry-After.
+    for _ in range(4):
+        r = requests.post(DISCORD_WEBHOOK, json=payload, timeout=10)
+        if r.status_code == 429:
+            retry_after = float(r.json().get("retry_after", 1))
+            print(f"  ⏳ Rate limit Discord, attente {retry_after:.1f}s")
+            time.sleep(retry_after + 0.3)
+            continue
+        r.raise_for_status()
+        break
+    else:
+        raise RuntimeError("Discord rate limit non résolu après plusieurs tentatives")
     print(f"  ✅ Notification Discord envoyée pour {name} n°{info['numero']}")
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -168,6 +179,8 @@ def main():
             "detected_at": datetime.utcnow().isoformat(),
         }
         updated = True
+        # Throttle pour rester sous la limite Discord (~5 webhooks/s).
+        time.sleep(1)
 
     if updated:
         save_state(state)
