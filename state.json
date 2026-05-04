@@ -160,11 +160,43 @@
     "detected_at": "2026-05-04T21:59:18.824624"
   },
   "18262": {
-    "name": "SUPER DONALD GÉANT HS REV",
-    "numero": "3H",
-    "date_entree": "05/02/2025",
+    "name": "SUPER DONALD GEANT SPG HS REV",
+    "numero": "4H",
+    "date_entree": "14/03/2026",
     "date_sortie": "12/06/2026",
-    "prix": "6.95 €",
-    "detected_at": "2026-05-04T21:59:23.392675"
+    "prix": "8,50 €",
+    "detected_at": "2026-05-04T22:24:53.416373"
+  },
+  "18360": {
+    "name": "NOUVELLE JEUNESSE DE PICSOU",
+    "numero": "1H",
+    "date_entree": "27/06/2025",
+    "date_sortie": "24/12/2025",
+    "prix": "12,95 €",
+    "detected_at": "2026-05-04T22:24:54.617243"
+  },
+  "18658": {
+    "name": "PICSOU SOIR",
+    "numero": "1",
+    "date_entree": "04/02/2026",
+    "date_sortie": "05/05/2026",
+    "prix": "6,99 €",
+    "detected_at": "2026-05-04T22:24:55.822793"
+  },
+  "15970": {
+    "name": "MEILLEUR DU JAL DE MICKEY HS",
+    "numero": "7H",
+    "date_entree": "29/08/2025",
+    "date_sortie": "27/11/2025",
+    "prix": "6,99 €",
+    "detected_at": "2026-05-04T22:24:57.128623"
+  },
+  "19607": {
+    "name": "DESTIN DE PICSOU (LE)",
+    "numero": "1H",
+    "date_entree": "06/12/2025",
+    "date_sortie": "04/06/2026",
+    "prix": "12,95 €",
+    "detected_at": "2026-05-04T22:24:58.321092"
   }
 }
