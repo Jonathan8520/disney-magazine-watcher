@@ -33,6 +33,10 @@ DEFAULT_COLOR = 0x808080
 SEARCH_URL = "https://direct-editeurs.fr/nos-magazines"
 SITE_BASE = "https://direct-editeurs.fr"
 MLP_URL = "https://catalogueproduits.mlp.fr/Default.aspx"
+MLP_FAMILY_URL = "https://catalogueproduits.mlp.fr/liste.aspx?ssFam={}"
+# Sous-familles MLP qu'on agrège côté découverte. D23 = "Disney" (Incontournables,
+# Destin de Picsou, Souvenirs du Klondike, etc. — magazines spéciaux Disney).
+MLP_FAMILIES = ["D23"]
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; MagazineWatcher/1.0)"}
@@ -111,6 +115,8 @@ def discover():
     Les codifs uniquement présents sur MLP sont enrichis via fetch_mlp_product."""
     de_results = discover_de()
     mlp_codifs = discover_mlp()
+    for fam in MLP_FAMILIES:
+        mlp_codifs |= discover_mlp_family(fam)
     extras = mlp_codifs - de_results.keys()
     if extras:
         print(f"   ⤷ {len(extras)} magazines MLP-only à enrichir : {', '.join(sorted(extras))}")
@@ -196,6 +202,28 @@ def fetch_mlp_product(codif):
     except Exception as e:
         print(f"  ⚠️  Lookup MLP échoué pour codif {codif} : {e}")
         return None
+
+def discover_mlp_family(ss_fam):
+    """Liste les magazines MLP d'une sous-famille (ex: D23 = Disney). Filtre
+    pochettes et bundles comme discover_mlp(). Sans ASP.NET viewstate (GET simple)."""
+    try:
+        r = requests.get(MLP_FAMILY_URL.format(ss_fam), headers=HEADERS, timeout=15)
+        r.raise_for_status()
+        codifs = set()
+        for m in re.finditer(
+            r'<span id="[^"]*_titre">([^<]+)</span>\s*</p>\s*'
+            r'<p[^>]*>\s*<span id="[^"]*_titCode">(\d+)</span>',
+            r.text,
+        ):
+            titre, codif = m.group(1).strip(), m.group(2)
+            t = titre.upper()
+            if t.startswith("POCH") or "+ PRODU" in t:
+                continue
+            codifs.add(codif)
+        return codifs
+    except Exception as e:
+        print(f"⚠️  discover_mlp_family({ss_fam}) échoué : {e}")
+        return set()
 
 def discover_mlp():
     """Recherche MLP par chaque mot-clé, dédoublonne par codif, renvoie un set
