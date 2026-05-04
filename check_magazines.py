@@ -15,6 +15,12 @@ KEYWORDS = ["picsou", "mickey", "mickey parade", "fantomiald", "donald"]
 # Slugs à ignorer (pochettes promo / SKU "produit" qui dupliquent le mag principal).
 SKIP_SLUGS = ["pochette-", "--produit"]
 
+# Codifs à exclure explicitement (magazines mal catégorisés sur MLP qui matchent
+# nos sources de découverte sans être réellement Disney).
+SKIP_CODIFS = {
+    "11560",  # ANIME CULT (classé à tort en sous-famille Disney D23)
+}
+
 # Override manuel pour les magazines principaux : emoji et couleur dédiés.
 # Pour tous les autres, on utilise DEFAULT_EMOJI / DEFAULT_COLOR.
 OVERRIDES = {
@@ -117,6 +123,10 @@ def discover():
     mlp_codifs = discover_mlp()
     for fam in MLP_FAMILIES:
         mlp_codifs |= discover_mlp_family(fam)
+    # Retire les codifs explicitement blacklistés (DE comme MLP).
+    for codif in SKIP_CODIFS:
+        de_results.pop(codif, None)
+    mlp_codifs -= SKIP_CODIFS
     extras = mlp_codifs - de_results.keys()
     if extras:
         print(f"   ⤷ {len(extras)} magazines MLP-only à enrichir : {', '.join(sorted(extras))}")
