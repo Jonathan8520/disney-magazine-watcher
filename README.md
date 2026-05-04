@@ -4,7 +4,7 @@ Surveille les nouvelles sorties des magazines Disney/Picsou sur `direct-editeurs
 
 ## Magazines surveillés
 
-Le watcher **découvre automatiquement** tous les magazines Disney en interrogeant `direct-editeurs.fr` avec les mots-clés `picsou`, `mickey`, `fantomiald`, `donald`. Aucune liste à maintenir : un nouveau hors-série Disney apparaît dans le catalogue → il sera notifié au run suivant.
+Le watcher **découvre automatiquement** tous les magazines Disney en interrogeant `direct-editeurs.fr` avec les mots-clés `picsou`, `mickey`, `mickey parade`, `fantomiald`, `donald`. Les pochettes promo et les magazines retirés du catalogue ("trop vieux") sont automatiquement écartés. Aucune liste à maintenir : un nouveau hors-série Disney apparaît dans le catalogue → il sera notifié au run suivant.
 
 Magazines principaux (avec emoji/couleur dédiés via `OVERRIDES` dans `check_magazines.py`) :
 
@@ -46,10 +46,12 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 ## Comment ça marche
 
 - Le script tourne **toutes les 12h** (8h et 20h heure de Paris)
-- Il interroge `direct-editeurs.fr` (qui agrège MLP + France Messagerie) pour chaque magazine
+- Il interroge `direct-editeurs.fr` (qui agrège MLP + France Messagerie) en quelques requêtes pour découvrir tous les magazines Disney actifs
 - Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
-- Si nouveau numéro → notification Discord avec titre, date de parution et couverture
+- Pour chaque nouveau numéro détecté, il interroge MLP pour récupérer la date de relève prévisionnelle (« Jusqu'au »)
+- Notification Discord avec titre, numéro, prix, date de parution, date de relève et couverture en grand
 - Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
+- Throttle 1s + retry automatique sur 429 pour respecter la limite Discord (~5 webhooks/s)
 
 ## Personnaliser un magazine
 
@@ -66,4 +68,4 @@ Le codif est l'identifiant numérique visible dans l'URL et le bloc "Codif :" su
 
 ## Élargir la couverture
 
-Pour suivre d'autres familles de magazines, modifie `KEYWORDS` dans `check_magazines.py` (par défaut : `picsou`, `mickey`, `fantomiald`, `donald`).
+Pour suivre d'autres familles de magazines, modifie `KEYWORDS` dans `check_magazines.py` (par défaut : `picsou`, `mickey`, `mickey parade`, `fantomiald`, `donald`).
