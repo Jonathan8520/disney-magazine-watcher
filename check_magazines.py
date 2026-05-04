@@ -10,7 +10,7 @@ from datetime import datetime
 # Mots-clés utilisés pour découvrir automatiquement les magazines Disney.
 # Chaque mot-clé renvoie un sous-ensemble (avec recouvrement) ; on dédoublonne
 # ensuite par codif.
-KEYWORDS = ["picsou", "mickey", "fantomiald", "donald"]
+KEYWORDS = ["picsou", "mickey", "mickey parade", "fantomiald", "donald"]
 
 # Slugs à ignorer (pochettes promo / SKU "produit" qui dupliquent le mag principal).
 SKIP_SLUGS = ["pochette-", "--produit"]
@@ -56,6 +56,7 @@ def parse_block(block):
     num_m = re.search(r"N° de parution\s*:</span>\s*([^<\s]+)", block)
     paru_m = re.search(r"Paru le\s*:</span>\s*([^<\s]+)", block)
     prix_m = re.search(r"Prix :</span>\s*([0-9.,]+\s*€)", block)
+    expired_m = re.search(r"Trop vieux le\s*:</span>\s*(\d{2}/\d{2}/\d{4})", block)
     img_m = re.search(r'<img src="([^"]+/parutions/[^"]+)"', block)
     href_m = re.search(r'href="(/magazine/\d+_([a-z0-9-]+)[^"]*)"', block)
     alt_m = re.search(r'<img src="[^"]+/parutions/[^"]+"\s+alt="([^"]+)"', block)
@@ -70,6 +71,7 @@ def parse_block(block):
         "numero": num_m.group(1) if num_m else None,
         "date_entree": paru_m.group(1) if paru_m else None,
         "prix": re.sub(r"\s+", " ", prix_m.group(1)).strip() if prix_m else None,
+        "expired_on": expired_m.group(1) if expired_m else None,
         "cover_url": cover_url,
         "url": SITE_BASE + href_m.group(1) if href_m else SITE_BASE,
         "slug": href_m.group(2) if href_m else "",
@@ -77,8 +79,11 @@ def parse_block(block):
     }
 
 def discover():
-    """Recherche tous les magazines Disney via les mots-clés, dédoublonne par codif."""
+    """Recherche tous les magazines Disney via les mots-clés, dédoublonne par codif.
+    Les magazines marqués 'Trop vieux' (date passée) sont ignorés : ils sont sortis
+    du catalogue et ne peuvent plus avoir de nouveau numéro."""
     s = get_session()
+    today = datetime.now().date()
     by_codif = {}
     for kw in KEYWORDS:
         r = s.post(SEARCH_URL, data={"searchParution.title": kw}, timeout=15)
@@ -93,6 +98,10 @@ def discover():
                 continue
             if any(p in info["slug"] for p in SKIP_SLUGS):
                 continue
+            if info["expired_on"]:
+                d, m, y = info["expired_on"].split("/")
+                if datetime(int(y), int(m), int(d)).date() < today:
+                    continue
             by_codif.setdefault(info["codif"], info)
     return list(by_codif.values())
 
