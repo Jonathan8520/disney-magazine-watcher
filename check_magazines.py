@@ -32,6 +32,7 @@ DEFAULT_COLOR = 0x808080
 
 SEARCH_URL = "https://direct-editeurs.fr/nos-magazines"
 SITE_BASE = "https://direct-editeurs.fr"
+MLP_URL = "https://catalogueproduits.mlp.fr/Default.aspx"
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; MagazineWatcher/1.0)"}
@@ -93,6 +94,46 @@ def discover():
             by_codif.setdefault(info["codif"], info)
     return list(by_codif.values())
 
+# ── MLP : enrichissement avec la date de relève prévisionnelle ────────────────
+# Direct Éditeurs ne renseigne pas le "Relevé le" tant que le numéro est en
+# vente. MLP, lui, expose une date prévisionnelle. On l'interroge uniquement
+# pour les nouveaux numéros (donc 0–2 fois par run en régime de croisière).
+def fetch_mlp_release_date(codif):
+    try:
+        s = requests.Session()
+        s.headers.update(HEADERS)
+        r0 = s.get(MLP_URL, timeout=15)
+        def vs(name):
+            m = re.search(rf'name="{name}"[^>]*value="([^"]*)"', r0.text)
+            return m.group(1) if m else ""
+        data = {
+            "__EVENTTARGET": "",
+            "__EVENTARGUMENT": "",
+            "__VIEWSTATE": vs("__VIEWSTATE"),
+            "__VIEWSTATEGENERATOR": vs("__VIEWSTATEGENERATOR"),
+            "__EVENTVALIDATION": vs("__EVENTVALIDATION"),
+            "ctl00$searchBar$txtSearchByTitre": "",
+            "ctl00$searchBar$txtSearchByCode": codif,
+            "ctl00$searchBar$imgSearchValide.x": "5",
+            "ctl00$searchBar$imgSearchValide.y": "5",
+            "ctl00$searchBar$txtMisEnVenteDu": "",
+            "ctl00$searchBar$txtMisEnVenteAu": "",
+        }
+        r1 = s.post(MLP_URL, data=data, timeout=15, allow_redirects=True)
+        if "tit_code" not in r1.url:
+            return None  # MLP n'a pas redirigé vers une page produit
+        def find(suffix):
+            m = re.search(
+                rf'id="ContentPlaceHolder1_[^"]*{suffix}"[^>]*>([^<]+)</span>',
+                r1.text, re.IGNORECASE,
+            )
+            return m.group(1).strip() if m else None
+        d, mo, y = find("spanJs"), find("spanMs"), find("spanAs")
+        return f"{d}/{mo}/{y}" if (d and mo and y) else None
+    except Exception as e:
+        print(f"  ⚠️  Lookup MLP échoué pour codif {codif} : {e}")
+        return None
+
 # ── State ─────────────────────────────────────────────────────────────────────
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -118,6 +159,8 @@ def send_discord(name, emoji, color, info):
     }
     if info["date_entree"]:
         embed["fields"].append({"name": "📅 En kiosque depuis", "value": info["date_entree"], "inline": True})
+    if info.get("date_sortie"):
+        embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_sortie"], "inline": True})
     if info["cover_url"]:
         embed["image"] = {"url": info["cover_url"]}
 
@@ -167,6 +210,7 @@ def main():
             continue
 
         print(f"  🆕 Nouveau numéro : n°{numero} (précédent : {last_known})")
+        info["date_sortie"] = fetch_mlp_release_date(codif)
         try:
             send_discord(name, emoji, color, info)
         except Exception as e:
@@ -176,6 +220,7 @@ def main():
             "name": name,
             "numero": numero,
             "date_entree": info["date_entree"],
+            "date_sortie": info["date_sortie"],
             "detected_at": datetime.utcnow().isoformat(),
         }
         updated = True
