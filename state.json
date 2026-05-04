@@ -1,1 +1,170 @@
-{}
+{
+  "15599": {
+    "name": "SUPER PICSOU GÉANT HS BD DYNASTIE DE PICSOU REV",
+    "numero": "2H",
+    "date_entree": "10/04/2026",
+    "date_sortie": "09/07/2026",
+    "prix": "10.9 €",
+    "detected_at": "2026-05-04T21:57:50.878004"
+  },
+  "15681": {
+    "name": "PICSOU MAGAZINE HS COLLECTION DELUXE",
+    "numero": "3H",
+    "date_entree": "08/04/2026",
+    "date_sortie": "05/10/2026",
+    "prix": "12.95 €",
+    "detected_at": "2026-05-04T21:57:55.282080"
+  },
+  "13159": {
+    "name": "Picsou Magazine",
+    "numero": "593",
+    "date_entree": "19/03/2026",
+    "date_sortie": "18/05/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:57:59.727569"
+  },
+  "14068": {
+    "name": "Les Trésors de Picsou",
+    "numero": "74H",
+    "date_entree": "14/03/2026",
+    "date_sortie": "12/06/2026",
+    "prix": "7.99 €",
+    "detected_at": "2026-05-04T21:58:04.527330"
+  },
+  "14016": {
+    "name": "Super Picsou Géant",
+    "numero": "253",
+    "date_entree": "11/03/2026",
+    "date_sortie": "10/05/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:58:09.306491"
+  },
+  "12825": {
+    "name": "SUPER PICSOU GÉANT HS SUPER DONALD GÉANT",
+    "numero": "6H",
+    "date_entree": "18/12/2025",
+    "date_sortie": "18/03/2026",
+    "prix": "8.5 €",
+    "detected_at": "2026-05-04T21:58:13.941627"
+  },
+  "18268": {
+    "name": "SUPER PICSOU GÉANT HS SPÉCIAL DONALD DOUBLE DUCK REV",
+    "numero": "6H",
+    "date_entree": "06/12/2025",
+    "date_sortie": "06/03/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:58:18.496766"
+  },
+  "13459": {
+    "name": "SUPER PICSOU GÉANT HS JEUX",
+    "numero": "7H",
+    "date_entree": "22/11/2025",
+    "date_sortie": "20/02/2026",
+    "prix": "5.99 €",
+    "detected_at": "2026-05-04T21:58:22.861976"
+  },
+  "15930": {
+    "name": "PICSOU MAGAZINE HS COLLECTION DELUXE",
+    "numero": "2H",
+    "date_entree": "12/11/2025",
+    "date_sortie": "11/05/2026",
+    "prix": "12.95 €",
+    "detected_at": "2026-05-04T21:58:27.689726"
+  },
+  "17575": {
+    "name": "PICSOU ANNIVERSAIRE EN OR REV",
+    "numero": "1H",
+    "date_entree": "31/10/2025",
+    "date_sortie": "29/01/2026",
+    "prix": "8.99 €",
+    "detected_at": "2026-05-04T21:58:33.174290"
+  },
+  "18288": {
+    "name": "PICSOU MAGAZINE HS CASTORS JUNIORS",
+    "numero": "7H",
+    "date_entree": "15/10/2025",
+    "date_sortie": "14/01/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:58:37.829952"
+  },
+  "19603": {
+    "name": "PICSOU MAGAZINE HS SOUVENIRS DU KLONDIKE",
+    "numero": "1H",
+    "date_entree": "10/10/2025",
+    "date_sortie": "08/04/2026",
+    "prix": "12.95 €",
+    "detected_at": "2026-05-04T21:58:42.360180"
+  },
+  "12651": {
+    "name": "SUPER PICSOU GÉANT HS BD DYNASTIE DE PICSOU",
+    "numero": "6H",
+    "date_entree": "08/10/2025",
+    "date_sortie": "07/01/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:58:47.029727"
+  },
+  "14067": {
+    "name": "Journal de Mickey",
+    "numero": "3854",
+    "date_entree": "29/04/2026",
+    "date_sortie": "13/05/2026",
+    "prix": "4.9 €",
+    "detected_at": "2026-05-04T21:58:51.706590"
+  },
+  "15528": {
+    "name": "Mickey Junior",
+    "numero": "488",
+    "date_entree": "23/04/2026",
+    "date_sortie": "18/06/2026",
+    "prix": "5.95 €",
+    "detected_at": "2026-05-04T21:58:56.285477"
+  },
+  "15935": {
+    "name": "Le Meilleur du Journal de Mickey",
+    "numero": "25",
+    "date_entree": "01/04/2026",
+    "date_sortie": "30/06/2026",
+    "prix": "4.95 €",
+    "detected_at": "2026-05-04T21:59:00.729424"
+  },
+  "14108": {
+    "name": "Journal de Mickey HS",
+    "numero": "12H",
+    "date_entree": "14/03/2026",
+    "date_sortie": "12/06/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:59:05.167184"
+  },
+  "18875": {
+    "name": "MICKEY JUNIOR HS BABY",
+    "numero": "3H",
+    "date_entree": "04/02/2026",
+    "date_sortie": "05/05/2026",
+    "prix": "5.95 €",
+    "detected_at": "2026-05-04T21:59:09.769401"
+  },
+  "14513": {
+    "name": "MICKEY JUNIOR HS JEUX",
+    "numero": "13H",
+    "date_entree": "04/02/2026",
+    "date_sortie": "05/05/2026",
+    "prix": "7.99 €",
+    "detected_at": "2026-05-04T21:59:14.271132"
+  },
+  "15190": {
+    "name": "Les Chroniques de Fantomiald",
+    "numero": "37",
+    "date_entree": "11/02/2026",
+    "date_sortie": "12/05/2026",
+    "prix": "6.99 €",
+    "detected_at": "2026-05-04T21:59:18.824624"
+  },
+  "18262": {
+    "name": "SUPER DONALD GÉANT HS REV",
+    "numero": "3H",
+    "date_entree": "05/02/2025",
+    "date_sortie": "12/06/2026",
+    "prix": "6.95 €",
+    "detected_at": "2026-05-04T21:59:23.392675"
+  }
+}
