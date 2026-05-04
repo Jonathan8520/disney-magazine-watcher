@@ -1,6 +1,6 @@
 # 🦆 Disney Magazine Watcher
 
-Surveille les nouvelles sorties des magazines Disney/Picsou sur MLP et envoie une notification Discord à chaque nouveau numéro.
+Surveille les nouvelles sorties des magazines Disney/Picsou sur `direct-editeurs.fr` et envoie une notification Discord à chaque nouveau numéro.
 
 ## Magazines surveillés
 
@@ -10,8 +10,14 @@ Surveille les nouvelles sorties des magazines Disney/Picsou sur MLP et envoie un
 | 🦆 Super Picsou Géant | Bimestriel |
 | 🐭 Journal de Mickey | Hebdomadaire |
 | ⭐ Journal de Mickey HS | Irrégulier |
-| 🦸 Fantomiald | Bimestriel |
+| 🦸 Les Chroniques de Fantomiald | Bimestriel |
 | 💎 Les Trésors de Picsou | Trimestriel |
+| 🧒 Mickey Junior | Mensuel |
+| 🏆 Le Meilleur du Journal de Mickey | Trimestriel |
+| 📘 Picsou HS Collection Deluxe | Irrégulier |
+| 🦫 Picsou HS Castors Juniors | Irrégulier |
+| ⛏️ Picsou HS Souvenirs du Klondike | Irrégulier |
+| 🎂 Picsou Anniversaire en or | Irrégulier |
 
 ## Setup (5 minutes)
 
@@ -38,16 +44,16 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 ## Comment ça marche
 
 - Le script tourne **toutes les 12h** (8h et 20h heure de Paris)
-- Il scrape `catalogueproduits.mlp.fr` pour chaque magazine
+- Il interroge `direct-editeurs.fr` (qui agrège MLP + France Messagerie) pour chaque magazine
 - Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
-- Si nouveau numéro → notification Discord avec titre, dates et couverture
+- Si nouveau numéro → notification Discord avec titre, date de parution et couverture
 - Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
 
 ## Ajouter un magazine
 
 Dans `check_magazines.py`, ajoute une entrée dans `MAGAZINES` :
 ```python
-{"name": "Nom du magazine", "tit_code": "XXXXX=", "emoji": "📰", "color": 0xFF0000},
+{"name": "Nom du magazine", "codif": "12345", "emoji": "📰", "color": 0xFF0000},
 ```
 
-Pour trouver le `tit_code` d'un magazine, cherche-le sur `catalogueproduits.mlp.fr` et copie la valeur du paramètre `tit_code` dans l'URL de la page produit.
+Pour trouver le `codif` d'un magazine, cherche-le sur `direct-editeurs.fr/nos-magazines` : c'est l'identifiant numérique visible dans l'URL du magazine et dans le bloc "Codif :" de sa page.

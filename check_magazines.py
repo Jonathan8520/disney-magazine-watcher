@@ -2,21 +2,28 @@ import json
 import os
 import re
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
-from urllib.parse import quote
 
 # ── Config magazines ──────────────────────────────────────────────────────────
+# `codif` = identifiant numérique du magazine sur direct-editeurs.fr
+# (visible dans l'URL et le bloc "Codif :" de la page).
 MAGAZINES = [
-    {"name": "Picsou Magazine",          "tit_code": "njphxbE4HOM=",  "emoji": "💰", "color": 0xFFCC00},
-    {"name": "Super Picsou Géant",       "tit_code": "lWSO/eJV+aI=",  "emoji": "🦆", "color": 0xFF8C00},
-    {"name": "Journal de Mickey",        "tit_code": "m6XSnFo3ZUQ=",  "emoji": "🐭", "color": 0xFF0000},
-    {"name": "Journal de Mickey HS",     "tit_code": "sIixRZCuH84=",  "emoji": "⭐", "color": 0xCC0000},
-    {"name": "Fantomiald",               "tit_code": "l4QEZfnUEIk=",  "emoji": "🦸", "color": 0x6A0DAD},
-    {"name": "Les Trésors de Picsou",    "tit_code": "6suANHFJ4cU=",  "emoji": "💎", "color": 0x1E90FF},
+    {"name": "Picsou Magazine",                  "codif": "13159", "emoji": "💰", "color": 0xFFCC00},
+    {"name": "Super Picsou Géant",               "codif": "14016", "emoji": "🦆", "color": 0xFF8C00},
+    {"name": "Journal de Mickey",                "codif": "14067", "emoji": "🐭", "color": 0xFF0000},
+    {"name": "Journal de Mickey HS",             "codif": "14108", "emoji": "⭐", "color": 0xCC0000},
+    {"name": "Les Chroniques de Fantomiald",     "codif": "15190", "emoji": "🦸", "color": 0x6A0DAD},
+    {"name": "Les Trésors de Picsou",            "codif": "14068", "emoji": "💎", "color": 0x1E90FF},
+    {"name": "Mickey Junior",                    "codif": "15528", "emoji": "🧒", "color": 0xFFA500},
+    {"name": "Le Meilleur du Journal de Mickey", "codif": "15935", "emoji": "🏆", "color": 0xDAA520},
+    {"name": "Picsou HS Collection Deluxe",      "codif": "15681", "emoji": "📘", "color": 0x4169E1},
+    {"name": "Picsou HS Castors Juniors",        "codif": "18288", "emoji": "🦫", "color": 0x228B22},
+    {"name": "Picsou HS Souvenirs du Klondike",  "codif": "19603", "emoji": "⛏️", "color": 0xB8860B},
+    {"name": "Picsou Anniversaire en or",        "codif": "17575", "emoji": "🎂", "color": 0xFFD700},
 ]
 
-BASE_URL = "https://catalogueproduits.mlp.fr/produit.aspx?tit_code={}"
+SEARCH_URL = "https://direct-editeurs.fr/nos-magazines"
+SITE_BASE = "https://direct-editeurs.fr"
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 
@@ -24,64 +31,65 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; MagazineWatcher/1.0)"
 }
 
+# Une session partagée pour tous les magazines (cookies + jsessionid).
+_session = None
+
+def get_session():
+    global _session
+    if _session is None:
+        _session = requests.Session()
+        _session.headers.update(HEADERS)
+        _session.get(SEARCH_URL, timeout=15)
+    return _session
+
 # ── Scraping ──────────────────────────────────────────────────────────────────
-def fetch_magazine(tit_code):
-    url = BASE_URL.format(quote(tit_code, safe=""))
-    resp = requests.get(url, headers=HEADERS, timeout=15)
+def fetch_magazine(codif):
+    """
+    Recherche le magazine par son codif sur direct-editeurs.fr et extrait
+    les infos de la parution courante (numéro, date, couverture, lien).
+    """
+    s = get_session()
+    resp = s.post(SEARCH_URL, data={"searchParution.title": codif}, timeout=15)
     resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
+    text = resp.text
 
-    # Nom du magazine (ex: "PICSOU MAGAZINE") — span id se termine par "_tit1".
-    # Si absent, c'est qu'on n'est pas sur une page produit (tit_code obsolète →
-    # MLP redirige vers la page d'accueil) : on lève pour ne pas scraper la home.
-    name_span = soup.find("span", id=lambda x: x and x.endswith("_tit1"))
-    if not name_span:
-        raise ValueError(
-            "Page produit introuvable (tit_code probablement obsolète, MLP a renvoyé l'accueil)"
-        )
-    mag_name = name_span.get_text(strip=True)
+    # Le bloc <div class="info-mag"> du résultat de recherche contient tout :
+    # codif, n° de parution, date "Paru le", couverture, messagerie.
+    marker = f"<span>Codif :</span> {codif}"
+    i = text.find(marker)
+    if i < 0:
+        raise ValueError(f"Aucun résultat pour codif {codif}")
 
-    # Numéro (ex: "N°593H" → "593") : on prend le _num du bloc produit
-    # principal (id préfixé par ContentPlaceHolder1_), pas ceux des widgets
-    # latéraux comme ContentCentral_sortiesJour_*.
-    num_span = soup.find(
-        "span",
-        id=lambda x: x and x.startswith("ContentPlaceHolder1_") and x.endswith("_num"),
-    )
-    num_text = num_span.get_text(strip=True) if num_span else ""
-    num_match = re.search(r"(\d+[A-Z]*)", num_text)
+    start = text.rfind('class="info-mag"', 0, i)
+    end = text.find('class="info-mag"', i + 1)
+    block = text[start:end] if end > 0 else text[start:start + 5000]
+
+    num_match = re.search(r"N° de parution\s*:</span>\s*([^<\s]+)", block)
     numero = num_match.group(1) if num_match else None
 
-    full_title = f"{mag_name} N°{numero}" if mag_name and numero else (mag_name or num_text)
+    paru_match = re.search(r"Paru le\s*:</span>\s*([^<\s]+)", block)
+    date_entree = paru_match.group(1) if paru_match else None
 
-    # Dates (jour/mois/année peuvent manquer individuellement).
-    # La casse des suffixes varie côté MLP (ex: 'spanje' minuscule pour le jour
-    # d'entrée), donc on compare en lower-case.
-    def get_date(day_id, month_id, year_id):
-        def find_suffix(suffix):
-            s = suffix.lower()
-            return soup.find(
-                "span",
-                id=lambda x: x and x.startswith("ContentPlaceHolder1_") and x.lower().endswith(s),
-            )
-        d = find_suffix(day_id)
-        m = find_suffix(month_id)
-        y = find_suffix(year_id)
-        parts = [s.text.strip() for s in (d, m, y) if s and s.text.strip()]
-        return "/".join(parts) if parts else None
+    # Date de relève (souvent vide pour la parution courante)
+    relev_match = re.search(r"Relev&eacute; le\s*:</span>\s*([0-9/]+)", block)
+    if not relev_match:
+        relev_match = re.search(r"Relevé le\s*:</span>\s*([0-9/]+)", block)
+    date_sortie = relev_match.group(1) if relev_match else None
 
-    date_entree = get_date("spanJe", "spanMe", "spanAe")
-    date_sortie = get_date("spanJs", "spanMs", "spanAs")
-
-    # Image de couverture (id="couverture_1" sur la page produit)
-    img = soup.find("img", id="couverture_1")
+    # Cover : on prend la version pleine taille (sans préfixe 240x240)
+    img_match = re.search(r'<img src="([^"]+/parutions/[^"]+)"', block)
     cover_url = None
-    if img and img.get("src"):
-        src = img["src"]
-        if src.startswith("http"):
-            cover_url = src
-        else:
-            cover_url = "https://catalogueproduits.mlp.fr/" + src.lstrip("/")
+    if img_match:
+        cover_url = re.sub(r"/\d+x\d+/parutions/", "/parutions/", img_match.group(1))
+
+    # Lien direct vers la page produit
+    href_match = re.search(r'href="(/magazine/[^"]+)"', block)
+    page_url = SITE_BASE + href_match.group(1) if href_match else SITE_BASE
+
+    # Nom affiché par le site (l'attribut alt= de la cover, en MAJUSCULES)
+    alt_match = re.search(r'<img src="[^"]+/parutions/[^"]+"\s+alt="([^"]+)"', block)
+    site_name = alt_match.group(1) if alt_match else ""
+    full_title = f"{site_name} N°{numero}" if site_name and numero else site_name
 
     return {
         "numero": numero,
@@ -89,7 +97,7 @@ def fetch_magazine(tit_code):
         "date_entree": date_entree,
         "date_sortie": date_sortie,
         "cover_url": cover_url,
-        "url": url,
+        "url": page_url,
     }
 
 # ── State ─────────────────────────────────────────────────────────────────────
@@ -110,7 +118,7 @@ def send_discord(mag, info):
         "url": info["url"],
         "color": mag["color"],
         "fields": [],
-        "footer": {"text": "Source : catalogueproduits.mlp.fr"},
+        "footer": {"text": "Source : direct-editeurs.fr"},
         "timestamp": datetime.utcnow().isoformat(),
     }
     if info["date_entree"]:
@@ -137,7 +145,7 @@ def main():
         name = mag["name"]
         print(f"🔍 Vérification : {name}")
         try:
-            info = fetch_magazine(mag["tit_code"])
+            info = fetch_magazine(mag["codif"])
             numero = info["numero"]
 
             if not numero:
