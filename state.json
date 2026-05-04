@@ -1,1 +1,86 @@
-{}
+{
+  "Picsou Magazine": {
+    "numero": "593",
+    "full_title": "PICSOU MAGAZINE N°593",
+    "date_entree": "19/03/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:52.525887"
+  },
+  "Super Picsou Géant": {
+    "numero": "253",
+    "full_title": "SUPER PICSOU G&Eacute;ANT N°253",
+    "date_entree": "11/03/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:52.839654"
+  },
+  "Journal de Mickey": {
+    "numero": "3854",
+    "full_title": "LE JOURNAL DE MICKEY N°3854",
+    "date_entree": "29/04/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:53.184247"
+  },
+  "Journal de Mickey HS": {
+    "numero": "12H",
+    "full_title": "LE JOURNAL DE MICKEY HS N°12H",
+    "date_entree": "14/03/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:53.485623"
+  },
+  "Les Chroniques de Fantomiald": {
+    "numero": "37",
+    "full_title": "LES CHRONIQUES DE FANTOMIALD N°37",
+    "date_entree": "11/02/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:53.811628"
+  },
+  "Les Trésors de Picsou": {
+    "numero": "74H",
+    "full_title": "PICSOU MAGAZINE HS LES TR&Eacute;SORS DE PICSOU N°74H",
+    "date_entree": "14/03/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:54.164731"
+  },
+  "Mickey Junior": {
+    "numero": "488",
+    "full_title": "MICKEY JUNIOR N°488",
+    "date_entree": "23/04/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:54.515372"
+  },
+  "Le Meilleur du Journal de Mickey": {
+    "numero": "25",
+    "full_title": "LE MEILLEUR DU JOURNAL DE MICKEY N°25",
+    "date_entree": "01/04/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:54.859266"
+  },
+  "Picsou HS Collection Deluxe": {
+    "numero": "3H",
+    "full_title": "PICSOU MAGAZINE HS COLLECTION DELUXE N°3H",
+    "date_entree": "08/04/2026",
+    "date_sortie": null,
+    "detected_at": "2026-05-04T21:24:55.159172"
+  },
+  "Picsou HS Castors Juniors": {
+    "numero": "7H",
+    "full_title": "PICSOU MAGAZINE HS CASTORS JUNIORS N°7H",
+    "date_entree": "15/10/2025",
+    "date_sortie": "13/01/2026",
+    "detected_at": "2026-05-04T21:24:55.481688"
+  },
+  "Picsou HS Souvenirs du Klondike": {
+    "numero": "1H",
+    "full_title": "PICSOU MAGAZINE HS SOUVENIRS DU KLONDIKE N°1H",
+    "date_entree": "10/10/2025",
+    "date_sortie": "08/04/2026",
+    "detected_at": "2026-05-04T21:24:55.773022"
+  },
+  "Picsou Anniversaire en or": {
+    "numero": "1H",
+    "full_title": "PICSOU ANNIVERSAIRE EN OR REV N°1H",
+    "date_entree": "31/10/2025",
+    "date_sortie": "29/01/2026",
+    "detected_at": "2026-05-04T21:24:56.096616"
+  }
+}
