@@ -118,7 +118,7 @@ def send_discord(mag, info):
     if info["date_sortie"]:
         embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_sortie"], "inline": True})
     if info["cover_url"]:
-        embed["thumbnail"] = {"url": info["cover_url"]}
+        embed["image"] = {"url": info["cover_url"]}
 
     payload = {
         "content": f"🆕 **Nouveau numéro disponible !** — {mag['name']}",
