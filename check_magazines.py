@@ -359,7 +359,8 @@ def send_discord(name, emoji, color, info, inducks_code=None):
     if info["cover_url"]:
         embed["image"] = {"url": info["cover_url"]}
 
-    is_rev = "(REV)" in name or name.endswith(" REV")
+    # REV (Remis En Vente) et pochettes = ré-éditions/lots, pas une vraie nouveauté.
+    is_rev = bool(re.search(r"\b(REV|POCH(?:ETTE)?)\b", name, re.IGNORECASE))
     headline = "🔁 **Remis en vente !**" if is_rev else "🆕 **Nouveau numéro disponible !**"
     payload = {
         "content": f"{headline} — {name}",
