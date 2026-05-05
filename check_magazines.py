@@ -10,7 +10,7 @@ from datetime import datetime
 # Mots-clés utilisés pour découvrir automatiquement les magazines Disney.
 # Chaque mot-clé renvoie un sous-ensemble (avec recouvrement) ; on dédoublonne
 # ensuite par codif.
-KEYWORDS = ["picsou", "mickey", "mickey parade", "fantomiald", "donald"]
+KEYWORDS = ["picsou", "mickey", "mickey hs", "mickey parade", "fantomiald", "donald"]
 
 # Slugs à ignorer (pochettes promo / SKU "produit" qui dupliquent le mag principal).
 SKIP_SLUGS = ["pochette-", "--produit"]
