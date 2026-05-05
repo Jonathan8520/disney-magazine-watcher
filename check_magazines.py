@@ -24,22 +24,46 @@ SKIP_CODIFS = {
 # Quand renseigné, on ajoute un lien "Sommaire" pointant vers la page du numéro.
 # Format URL : https://inducks.org/issue.php?c=fr/<CODE>  <NUM> (deux espaces).
 OVERRIDES = {
-    "13159": {"name": "Picsou Magazine",                  "emoji": "💰", "color": 0xFFCC00, "inducks": "PM"},
-    "14016": {"name": "Super Picsou Géant",               "emoji": "🦆", "color": 0xFF8C00, "inducks": "SPG"},
-    "14067": {"name": "Journal de Mickey",                "emoji": "🐭", "color": 0xFF0000, "inducks": "JM"},
-    "14108": {"name": "Journal de Mickey HS",             "emoji": "⭐", "color": 0xCC0000, "inducks": ("JMHSN", 3)},
-    "15190": {"name": "Les Chroniques de Fantomiald",     "emoji": "🦸", "color": 0x6A0DAD, "inducks": "CF"},
-    "14068": {"name": "Les Trésors de Picsou",            "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
-    "15528": {"name": "Mickey Junior",                    "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
-    "15935": {"name": "Le Meilleur du Journal de Mickey", "emoji": "🏆", "color": 0xDAA520},
-    # HS Picsou Magazine (Inducks série PMHS, lettre = sous-série)
-    "18288": {"inducks": ("PMHS", 3, "S")},   # Castors Juniors
-    # HS Super Picsou Géant (Inducks série SPGHS, lettre = sous-série)
-    "12825": {"inducks": ("SPGHS", 3, "D")},  # Super Donald Géant
-    "12651": {"inducks": ("SPGHS", 3, "H")},  # BD Dynastie de Picsou
-    "13459": {"inducks": ("SPGHS", 3, "J")},  # SPG HS Jeux
-    # Les Incontournables de Disney (largeur 4)
-    "14268": {"inducks": ("LI", 4)},
+    # ── Picsou Magazine et déclinaisons ──────────────────────────────────────
+    "13159": {"name": "Picsou Magazine",                       "emoji": "💰", "color": 0xFFCC00, "inducks": "PM"},
+    "15681": {"name": "Picsou Magazine HS Collection Deluxe",  "emoji": "📘"},
+    "15930": {"name": "Picsou Magazine HS Collection Deluxe (vol. 2)", "emoji": "📘"},
+    "18288": {"name": "Picsou HS Castors Juniors",             "emoji": "🦫", "inducks": ("PMHS", 3, "S")},
+    "19603": {"name": "Picsou HS Souvenirs du Klondike",       "emoji": "⛏️"},
+    "17575": {"name": "Picsou Anniversaire en or",             "emoji": "🎂"},
+    "18658": {"name": "Picsou Soir",                           "emoji": "🌆"},
+    "18360": {"name": "Nouvelle Jeunesse de Picsou",           "emoji": "🌱"},
+    "19607": {"name": "Le Destin de Picsou",                   "emoji": "⏳"},
+    "19052": {"name": "Pochette Picsou Magazine",              "emoji": "📦"},
+    # ── Super Picsou Géant et déclinaisons ───────────────────────────────────
+    "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": "SPG"},
+    "12651": {"name": "SPG HS Dynastie de Picsou",             "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
+    "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜"},
+    "12825": {"name": "SPG HS Super Donald Géant",             "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
+    "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆"},
+    "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹"},
+    "13459": {"name": "SPG HS Jeux",                           "emoji": "🎲", "inducks": ("SPGHS", 3, "J")},
+    # ── Trésors de Picsou ────────────────────────────────────────────────────
+    "14068": {"name": "Les Trésors de Picsou",                 "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
+    # ── Journal de Mickey et déclinaisons ────────────────────────────────────
+    "14067": {"name": "Journal de Mickey",                     "emoji": "🐭", "color": 0xFF0000, "inducks": "JM"},
+    "14108": {"name": "Journal de Mickey HS",                  "emoji": "⭐", "color": 0xCC0000, "inducks": ("JMHSN", 3)},
+    "13588": {"name": "JdM HS Spécial Aventures (REV)",        "emoji": "🗺️"},
+    "16096": {"name": "Journal de Mickey + Produit",           "emoji": "🎁"},
+    "15935": {"name": "Le Meilleur du Journal de Mickey",      "emoji": "🏆", "color": 0xDAA520},
+    "15970": {"name": "Le Meilleur du JdM HS",                 "emoji": "🏆"},
+    "18914": {"name": "Le Meilleur du JdM HS Spécial Enquêtes","emoji": "🔍"},
+    # ── Mickey Junior ────────────────────────────────────────────────────────
+    "15528": {"name": "Mickey Junior",                         "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
+    "14513": {"name": "Mickey Junior HS Jeux",                 "emoji": "🎲"},
+    "18875": {"name": "Mickey Junior HS Baby",                 "emoji": "🍼"},
+    # ── Mickey Parade ────────────────────────────────────────────────────────
+    "11068": {"name": "Pochette Mickey Parade",                "emoji": "📦"},
+    # ── Fantomiald ───────────────────────────────────────────────────────────
+    "15190": {"name": "Les Chroniques de Fantomiald",          "emoji": "🦸", "color": 0x6A0DAD, "inducks": "CF"},
+    # ── Disney divers ────────────────────────────────────────────────────────
+    "14268": {"name": "Les Incontournables de Disney",         "emoji": "🏛️", "inducks": ("LI", 4)},
+    "19064": {"name": "Les Incontournables (REV)",             "emoji": "🏛️"},
 }
 DEFAULT_EMOJI = "🦆"
 DEFAULT_COLOR = 0x808080
