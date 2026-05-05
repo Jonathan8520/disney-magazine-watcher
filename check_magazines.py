@@ -29,7 +29,7 @@ OVERRIDES = {
     "14067": {"name": "Journal de Mickey",                "emoji": "🐭", "color": 0xFF0000, "inducks": "JM"},
     "14108": {"name": "Journal de Mickey HS",             "emoji": "⭐", "color": 0xCC0000},
     "15190": {"name": "Les Chroniques de Fantomiald",     "emoji": "🦸", "color": 0x6A0DAD},
-    "14068": {"name": "Les Trésors de Picsou",            "emoji": "💎", "color": 0x1E90FF},
+    "14068": {"name": "Les Trésors de Picsou",            "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
     "15528": {"name": "Mickey Junior",                    "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
     "15935": {"name": "Le Meilleur du Journal de Mickey", "emoji": "🏆", "color": 0xDAA520},
 }
@@ -271,14 +271,17 @@ def save_state(state):
 
 # ── Discord ───────────────────────────────────────────────────────────────────
 def build_inducks_url(inducks_code, numero):
-    """Construit l'URL Inducks pour un numéro. Format: fr/<CODE>  <NUM> (2 espaces)."""
+    """Construit l'URL Inducks pour un numéro. Format: 'fr/<CODE><NUM>' où le n°
+    est cadré à droite sur 5 caractères avec espaces (ex: '  594' / '   61')."""
     if not inducks_code or not numero:
         return None
     # On strippe le suffixe alpha éventuel (594H → 594) pour la lookup Inducks.
     n = re.match(r"\d+", numero)
     if not n:
         return None
-    return f"https://inducks.org/issue.php?c=fr%2F{inducks_code}++{n.group(0)}"
+    from urllib.parse import quote_plus
+    issue_padded = n.group(0).rjust(5)
+    return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{inducks_code}{issue_padded}")
 
 def send_discord(name, emoji, color, info, inducks_code=None):
     title_tail = info["site_name"] or name
