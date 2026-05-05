@@ -38,9 +38,9 @@ OVERRIDES = {
     # ── Super Picsou Géant et déclinaisons ───────────────────────────────────
     "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": "SPG"},
     "12651": {"name": "SPG HS Dynastie de Picsou",             "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
-    "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜"},
+    "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
     "12825": {"name": "SPG HS Super Donald Géant",             "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
-    "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆"},
+    "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
     "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹", "inducks": ("DON", 4)},
     "13459": {"name": "SPG HS Jeux",                           "emoji": "🎲", "inducks": ("SPGHS", 3, "J")},
     # ── Trésors de Picsou ────────────────────────────────────────────────────
@@ -63,7 +63,7 @@ OVERRIDES = {
     "15190": {"name": "Les Chroniques de Fantomiald",          "emoji": "🦸", "color": 0x6A0DAD, "inducks": "CF"},
     # ── Disney divers ────────────────────────────────────────────────────────
     "14268": {"name": "Les Incontournables de Disney",         "emoji": "🏛️", "inducks": ("LI", 4)},
-    "19064": {"name": "Les Incontournables (REV)",             "emoji": "🏛️"},
+    "19064": {"name": "Les Incontournables (REV)",             "emoji": "🏛️", "inducks": ("LI", 4)},
 }
 DEFAULT_EMOJI = "🦆"
 DEFAULT_COLOR = 0x808080
