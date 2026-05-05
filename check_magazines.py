@@ -415,6 +415,8 @@ def main():
             "date_entree": info["date_entree"],
             "date_sortie": info["date_sortie"],
             "prix": info.get("prix"),
+            "url": info["url"],
+            "inducks_url": build_inducks_url(ov.get("inducks"), numero),
             "detected_at": datetime.utcnow().isoformat(),
         }
         updated = True
