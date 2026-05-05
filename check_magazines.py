@@ -20,14 +20,17 @@ SKIP_CODIFS = {
 
 # Override manuel pour les magazines principaux : emoji et couleur dédiés.
 # Pour tous les autres, on utilise DEFAULT_EMOJI / DEFAULT_COLOR.
+# `inducks` = code de la série dans la base Inducks (https://inducks.org).
+# Quand renseigné, on ajoute un lien "Sommaire" pointant vers la page du numéro.
+# Format URL : https://inducks.org/issue.php?c=fr/<CODE>  <NUM> (deux espaces).
 OVERRIDES = {
-    "13159": {"name": "Picsou Magazine",                  "emoji": "💰", "color": 0xFFCC00},
-    "14016": {"name": "Super Picsou Géant",               "emoji": "🦆", "color": 0xFF8C00},
-    "14067": {"name": "Journal de Mickey",                "emoji": "🐭", "color": 0xFF0000},
+    "13159": {"name": "Picsou Magazine",                  "emoji": "💰", "color": 0xFFCC00, "inducks": "PM"},
+    "14016": {"name": "Super Picsou Géant",               "emoji": "🦆", "color": 0xFF8C00, "inducks": "SPG"},
+    "14067": {"name": "Journal de Mickey",                "emoji": "🐭", "color": 0xFF0000, "inducks": "JM"},
     "14108": {"name": "Journal de Mickey HS",             "emoji": "⭐", "color": 0xCC0000},
     "15190": {"name": "Les Chroniques de Fantomiald",     "emoji": "🦸", "color": 0x6A0DAD},
     "14068": {"name": "Les Trésors de Picsou",            "emoji": "💎", "color": 0x1E90FF},
-    "15528": {"name": "Mickey Junior",                    "emoji": "🧒", "color": 0xFFA500},
+    "15528": {"name": "Mickey Junior",                    "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
     "15935": {"name": "Le Meilleur du Journal de Mickey", "emoji": "🏆", "color": 0xDAA520},
 }
 DEFAULT_EMOJI = "🦆"
@@ -267,10 +270,21 @@ def save_state(state):
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 # ── Discord ───────────────────────────────────────────────────────────────────
-def send_discord(name, emoji, color, info):
+def build_inducks_url(inducks_code, numero):
+    """Construit l'URL Inducks pour un numéro. Format: fr/<CODE>  <NUM> (2 espaces)."""
+    if not inducks_code or not numero:
+        return None
+    # On strippe le suffixe alpha éventuel (594H → 594) pour la lookup Inducks.
+    n = re.match(r"\d+", numero)
+    if not n:
+        return None
+    return f"https://inducks.org/issue.php?c=fr%2F{inducks_code}++{n.group(0)}"
+
+def send_discord(name, emoji, color, info, inducks_code=None):
     title_tail = info["site_name"] or name
     full_title = f"{title_tail} N°{info['numero']}" if info["numero"] else title_tail
     source = "catalogueproduits.mlp.fr" if "mlp.fr" in info["url"] else "direct-editeurs.fr"
+    inducks_url = build_inducks_url(inducks_code, info["numero"])
     embed = {
         "title": f"{emoji} {full_title}",
         "url": info["url"],
@@ -279,6 +293,8 @@ def send_discord(name, emoji, color, info):
         "footer": {"text": f"Source : {source}"},
         "timestamp": datetime.utcnow().isoformat(),
     }
+    if inducks_url:
+        embed["description"] = f"[📋 Sommaire sur Inducks]({inducks_url})"
     if info["date_entree"]:
         embed["fields"].append({"name": "📅 En kiosque depuis", "value": info["date_entree"], "inline": True})
     if info.get("date_sortie"):
@@ -340,7 +356,7 @@ def main():
             mlp_info = fetch_mlp_product(codif)
             info["date_sortie"] = mlp_info.get("date_sortie") if mlp_info else None
         try:
-            send_discord(name, emoji, color, info)
+            send_discord(name, emoji, color, info, inducks_code=ov.get("inducks"))
         except Exception as e:
             print(f"  ❌ Erreur Discord : {e}")
             continue
