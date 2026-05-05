@@ -26,8 +26,8 @@ SKIP_CODIFS = {
 OVERRIDES = {
     # ── Picsou Magazine et déclinaisons ──────────────────────────────────────
     "13159": {"name": "Picsou Magazine",                       "emoji": "💰", "color": 0xFFCC00, "inducks": "PM"},
-    "15681": {"name": "Picsou Magazine HS Collection Deluxe",  "emoji": "📘"},
-    "15930": {"name": "Picsou Magazine HS Collection Deluxe (vol. 2)", "emoji": "📘"},
+    "15681": {"name": "Picsou Magazine HS Collection Deluxe",  "emoji": "📘", "inducks": ("CD", 5)},
+    "15930": {"name": "Picsou Magazine HS Collection Deluxe (vol. 2)", "emoji": "📘", "inducks": ("CD", 5)},
     "18288": {"name": "Picsou HS Castors Juniors",             "emoji": "🦫", "inducks": ("PMHS", 3, "S")},
     "19603": {"name": "Picsou HS Souvenirs du Klondike",       "emoji": "⛏️"},
     "17575": {"name": "Picsou Anniversaire en or",             "emoji": "🎂"},
@@ -41,12 +41,12 @@ OVERRIDES = {
     "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜"},
     "12825": {"name": "SPG HS Super Donald Géant",             "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
     "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆"},
-    "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹"},
+    "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹", "inducks": ("DON", 4)},
     "13459": {"name": "SPG HS Jeux",                           "emoji": "🎲", "inducks": ("SPGHS", 3, "J")},
     # ── Trésors de Picsou ────────────────────────────────────────────────────
     "14068": {"name": "Les Trésors de Picsou",                 "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
     # ── Journal de Mickey et déclinaisons ────────────────────────────────────
-    "14067": {"name": "Journal de Mickey",                     "emoji": "🐭", "color": 0xFF0000, "inducks": "JM"},
+    "14067": {"name": "Journal de Mickey",                     "emoji": "🐭", "color": 0xFF0000, "inducks": ("JM", 8)},
     "14108": {"name": "Journal de Mickey HS",                  "emoji": "⭐", "color": 0xCC0000, "inducks": ("JMHSN", 3)},
     "13588": {"name": "JdM HS Spécial Aventures (REV)",        "emoji": "🗺️"},
     "16096": {"name": "Journal de Mickey + Produit",           "emoji": "🎁"},
@@ -125,9 +125,9 @@ def discover_de():
     Les magazines marqués 'Trop vieux' (date passée) sont ignorés.
 
     DE indexe parfois plusieurs entrées par codif pour la même parution (ex: JdM
-    apparaît à la fois en n°3854 et n°3854-3855, le format à tiret correspondant
-    au lot abonnement/2-numéros). Pour éviter les fausses notifs si l'ordre des
-    résultats change, on préfère systématiquement le format simple (sans tiret)."""
+    apparaît à la fois en n°3854 et n°3854-3855). On préfère systématiquement le
+    format à tiret quand il existe : c'est la forme canonique côté éditeur (le
+    JdM sort désormais par lots de 2) et celle qu'utilise Inducks."""
     s = get_session()
     today = datetime.now().date()
     by_codif = {}
@@ -147,10 +147,10 @@ def discover_de():
                 if datetime(int(y), int(m), int(d)).date() < today:
                     continue
             existing = by_codif.get(info["codif"])
-            # Garde la première entrée vue, sauf si elle a un n° "double" (avec
-            # tiret) et que la nouvelle est en format simple.
+            # Garde la première entrée vue, sauf si elle est en format simple
+            # alors qu'on découvre une variante à tiret (3854 → 3854-3855).
             if existing is None or (
-                "-" in (existing["numero"] or "") and "-" not in (info["numero"] or "")
+                "-" not in (existing["numero"] or "") and "-" in (info["numero"] or "")
             ):
                 by_codif[info["codif"]] = info
     return by_codif
@@ -321,12 +321,18 @@ def build_inducks_url(inducks, numero):
             prefix = ""
     else:
         code, pad, prefix = inducks, 5, ""
-    # On strippe le suffixe alpha éventuel (594H → 594) pour la lookup Inducks.
-    n = re.match(r"\d+", numero)
-    if not n:
-        return None
+    # Bi-issue (ex: 3854-3855) : Inducks utilise la forme courte 3854-55.
+    bi = re.match(r"(\d+)-(\d+)", numero)
+    if bi:
+        nstr = f"{bi.group(1)}-{bi.group(2)[-2:]}"
+    else:
+        # Strippe le suffixe alpha éventuel (594H → 594) pour la lookup Inducks.
+        n = re.match(r"\d+", numero)
+        if not n:
+            return None
+        nstr = n.group(0)
     from urllib.parse import quote_plus
-    issue_padded = (prefix + n.group(0)).rjust(pad)
+    issue_padded = (prefix + nstr).rjust(pad)
     return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{code}{issue_padded}")
 
 def send_discord(name, emoji, color, info, inducks_code=None):
