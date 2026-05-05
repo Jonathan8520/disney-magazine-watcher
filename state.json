@@ -214,5 +214,45 @@
     "date_sortie": "22/04/2026",
     "prix": "7,99 €",
     "detected_at": "2026-05-04T22:40:02.159475"
+  },
+  "11068": {
+    "name": "POCHETTE MICKEY PARADE",
+    "numero": "1H",
+    "date_entree": "08/04/2026",
+    "date_sortie": "07/07/2026",
+    "prix": "9.0 €",
+    "detected_at": "2026-05-05T19:25:29.875785"
+  },
+  "16096": {
+    "name": "LE JOURNAL DE MICKEY + PRODUIT",
+    "numero": "3850H",
+    "date_entree": "01/04/2026",
+    "date_sortie": "27/05/2026",
+    "prix": "6.9 €",
+    "detected_at": "2026-05-05T19:25:34.786777"
+  },
+  "18914": {
+    "name": "LE MEILLEUR DU JOURNAL DE MICKEY HS SPÉCIAL ENQUÊTES",
+    "numero": "1H",
+    "date_entree": "15/01/2026",
+    "date_sortie": "15/04/2026",
+    "prix": "5.99 €",
+    "detected_at": "2026-05-05T19:25:40.133391"
+  },
+  "13588": {
+    "name": "LE JOURNAL DE MICKEY HS SPÉCIAL AVENTURES REV",
+    "numero": "7H",
+    "date_entree": "14/01/2026",
+    "date_sortie": "15/04/2026",
+    "prix": "12.9 €",
+    "detected_at": "2026-05-05T19:25:45.236481"
+  },
+  "19052": {
+    "name": "POCH. PICSOU MAGAZINE REV",
+    "numero": "2H",
+    "date_entree": "08/07/2025",
+    "date_sortie": "06/10/2025",
+    "prix": "11,90 €",
+    "detected_at": "2026-05-05T19:25:46.515704"
   }
 }
