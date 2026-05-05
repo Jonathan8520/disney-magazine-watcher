@@ -248,5 +248,15 @@
     "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=MngFmwxMLuA%3d&par_num=PUgu2bwXqc0%3d",
     "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+D4",
     "detected_at": "2026-05-05T22:26:02.592139"
+  },
+  "14016": {
+    "name": "Super Picsou Géant",
+    "numero": "253",
+    "date_entree": "11/03/2026",
+    "date_sortie": "10/05/2026",
+    "prix": "6.99 €",
+    "url": "https://direct-editeurs.fr/magazine/14016_super-picsou-geant_253",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPG+253",
+    "detected_at": "2026-05-05T22:38:10.641954"
   }
 }
