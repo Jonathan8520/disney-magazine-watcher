@@ -32,6 +32,14 @@ OVERRIDES = {
     "14068": {"name": "Les Trésors de Picsou",            "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
     "15528": {"name": "Mickey Junior",                    "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
     "15935": {"name": "Le Meilleur du Journal de Mickey", "emoji": "🏆", "color": 0xDAA520},
+    # HS Picsou Magazine (Inducks série PMHS, lettre = sous-série)
+    "18288": {"inducks": ("PMHS", 3, "S")},   # Castors Juniors
+    # HS Super Picsou Géant (Inducks série SPGHS, lettre = sous-série)
+    "12825": {"inducks": ("SPGHS", 3, "D")},  # Super Donald Géant
+    "12651": {"inducks": ("SPGHS", 3, "H")},  # BD Dynastie de Picsou
+    "13459": {"inducks": ("SPGHS", 3, "J")},  # SPG HS Jeux
+    # Les Incontournables de Disney (largeur 4)
+    "14268": {"inducks": ("LI", 4)},
 }
 DEFAULT_EMOJI = "🦆"
 DEFAULT_COLOR = 0x808080
@@ -271,22 +279,30 @@ def save_state(state):
 
 # ── Discord ───────────────────────────────────────────────────────────────────
 def build_inducks_url(inducks, numero):
-    """Construit l'URL Inducks pour un numéro. Format: 'fr/<CODE><ISSUE>' où le
-    numéro est cadré à droite sur N caractères avec espaces. La largeur N varie
-    selon la série (5 par défaut pour PM/MP/TP/CF/MJ/SPG/JM, 3 pour JMHSN, etc.).
-    `inducks` accepte un str (code, largeur=5 par défaut) ou un tuple (code, n)."""
+    """Construit l'URL Inducks pour un numéro. Format: 'fr/<CODE><ISSUE>' où
+    l'issue est cadré à droite sur N caractères, éventuellement avec un préfixe
+    lettre pour les HS multi-sous-séries (ex: SPGHS D6 = SPG HS Donald Géant 6).
+
+    `inducks` accepte :
+      - str → (code, largeur 5, sans préfixe)        ex: 'PM'
+      - (code, largeur)                              ex: ('JMHSN', 3)
+      - (code, largeur, préfixe)                     ex: ('SPGHS', 3, 'D')"""
     if not inducks or not numero:
         return None
     if isinstance(inducks, tuple):
-        code, pad = inducks
+        if len(inducks) == 3:
+            code, pad, prefix = inducks
+        else:
+            code, pad = inducks
+            prefix = ""
     else:
-        code, pad = inducks, 5
+        code, pad, prefix = inducks, 5, ""
     # On strippe le suffixe alpha éventuel (594H → 594) pour la lookup Inducks.
     n = re.match(r"\d+", numero)
     if not n:
         return None
     from urllib.parse import quote_plus
-    issue_padded = n.group(0).rjust(pad)
+    issue_padded = (prefix + n.group(0)).rjust(pad)
     return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{code}{issue_padded}")
 
 def send_discord(name, emoji, color, info, inducks_code=None):
