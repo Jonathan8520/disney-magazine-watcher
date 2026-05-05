@@ -359,8 +359,10 @@ def send_discord(name, emoji, color, info, inducks_code=None):
     if info["cover_url"]:
         embed["image"] = {"url": info["cover_url"]}
 
+    is_rev = "(REV)" in name or name.endswith(" REV")
+    headline = "🔁 **Remis en vente !**" if is_rev else "🆕 **Nouveau numéro disponible !**"
     payload = {
-        "content": f"🆕 **Nouveau numéro disponible !** — {name}",
+        "content": f"{headline} — {name}",
         "embeds": [embed],
     }
     # Discord webhook limit ~5 req/s : on retry sur 429 en respectant Retry-After.
