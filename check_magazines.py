@@ -36,7 +36,7 @@ OVERRIDES = {
     "19607": {"name": "Le Destin de Picsou",                   "emoji": "⏳"},
     "19052": {"name": "Pochette Picsou Magazine",              "emoji": "📦"},
     # ── Super Picsou Géant et déclinaisons ───────────────────────────────────
-    "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": "SPG"},
+    "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": ("SPG", 4)},
     "12651": {"name": "SPG HS Dynastie de Picsou",             "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
     "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
     "12825": {"name": "SPG HS Super Donald Géant",             "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
