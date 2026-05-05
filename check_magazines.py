@@ -12,9 +12,6 @@ from datetime import datetime
 # ensuite par codif.
 KEYWORDS = ["picsou", "mickey", "mickey hs", "mickey parade", "fantomiald", "donald"]
 
-# Slugs à ignorer (pochettes promo / SKU "produit" qui dupliquent le mag principal).
-SKIP_SLUGS = ["pochette-", "--produit"]
-
 # Codifs à exclure explicitement (magazines mal catégorisés sur MLP qui matchent
 # nos sources de découverte sans être réellement Disney).
 SKIP_CODIFS = {
@@ -90,8 +87,7 @@ def parse_block(block):
 
 def discover_de():
     """Recherche tous les magazines Disney sur Direct Éditeurs via les mots-clés.
-    Les pochettes promo et les magazines marqués 'Trop vieux' (date passée) sont
-    ignorés."""
+    Les magazines marqués 'Trop vieux' (date passée) sont ignorés."""
     s = get_session()
     today = datetime.now().date()
     by_codif = {}
@@ -105,8 +101,6 @@ def discover_de():
         for i in range(len(starts) - 1):
             info = parse_block(text[starts[i]:starts[i + 1]])
             if not info:
-                continue
-            if any(p in info["slug"] for p in SKIP_SLUGS):
                 continue
             if info["expired_on"]:
                 d, m, y = info["expired_on"].split("/")
@@ -214,23 +208,12 @@ def fetch_mlp_product(codif):
         return None
 
 def discover_mlp_family(ss_fam):
-    """Liste les magazines MLP d'une sous-famille (ex: D23 = Disney). Filtre
-    pochettes et bundles comme discover_mlp(). Sans ASP.NET viewstate (GET simple)."""
+    """Liste les magazines MLP d'une sous-famille (ex: D23 = Disney). GET simple,
+    sans ASP.NET viewstate."""
     try:
         r = requests.get(MLP_FAMILY_URL.format(ss_fam), headers=HEADERS, timeout=15)
         r.raise_for_status()
-        codifs = set()
-        for m in re.finditer(
-            r'<span id="[^"]*_titre">([^<]+)</span>\s*</p>\s*'
-            r'<p[^>]*>\s*<span id="[^"]*_titCode">(\d+)</span>',
-            r.text,
-        ):
-            titre, codif = m.group(1).strip(), m.group(2)
-            t = titre.upper()
-            if t.startswith("POCH") or "+ PRODU" in t:
-                continue
-            codifs.add(codif)
-        return codifs
+        return set(re.findall(r'<span id="[^"]*_titCode">(\d+)</span>', r.text))
     except Exception as e:
         print(f"⚠️  discover_mlp_family({ss_fam}) échoué : {e}")
         return set()
@@ -255,17 +238,7 @@ def discover_mlp():
                 "ctl00$searchBar$txtMisEnVenteAu": "",
             }
             r = s.post(MLP_URL, data=data, timeout=15, allow_redirects=True)
-            for m in re.finditer(
-                r'<span id="[^"]*_titre">([^<]+)</span>\s*</p>\s*'
-                r'<p[^>]*>\s*<span id="[^"]*_titCode">(\d+)</span>',
-                r.text,
-            ):
-                titre, codif = m.group(1).strip(), m.group(2)
-                # Skip pochettes et bundles "AVEC + PRODU" (équivalent de SKIP_SLUGS sur DE).
-                t = titre.upper()
-                if t.startswith("POCH") or "+ PRODU" in t:
-                    continue
-                codifs.add(codif)
+            codifs.update(re.findall(r'<span id="[^"]*_titCode">(\d+)</span>', r.text))
         return codifs
     except Exception as e:
         print(f"⚠️  discover_mlp échoué : {e}")
