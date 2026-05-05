@@ -87,7 +87,12 @@ def parse_block(block):
 
 def discover_de():
     """Recherche tous les magazines Disney sur Direct Éditeurs via les mots-clés.
-    Les magazines marqués 'Trop vieux' (date passée) sont ignorés."""
+    Les magazines marqués 'Trop vieux' (date passée) sont ignorés.
+
+    DE indexe parfois plusieurs entrées par codif pour la même parution (ex: JdM
+    apparaît à la fois en n°3854 et n°3854-3855, le format à tiret correspondant
+    au lot abonnement/2-numéros). Pour éviter les fausses notifs si l'ordre des
+    résultats change, on préfère systématiquement le format simple (sans tiret)."""
     s = get_session()
     today = datetime.now().date()
     by_codif = {}
@@ -106,7 +111,13 @@ def discover_de():
                 d, m, y = info["expired_on"].split("/")
                 if datetime(int(y), int(m), int(d)).date() < today:
                     continue
-            by_codif.setdefault(info["codif"], info)
+            existing = by_codif.get(info["codif"])
+            # Garde la première entrée vue, sauf si elle a un n° "double" (avec
+            # tiret) et que la nouvelle est en format simple.
+            if existing is None or (
+                "-" in (existing["numero"] or "") and "-" not in (info["numero"] or "")
+            ):
+                by_codif[info["codif"]] = info
     return by_codif
 
 def discover():
