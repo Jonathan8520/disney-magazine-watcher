@@ -45,7 +45,7 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 
 ## Comment ça marche
 
-- Le script tourne **toutes les 12h** (8h et 20h heure de Paris)
+- Le script tourne **toutes les heures** (à la minute 0)
 - Il interroge `direct-editeurs.fr` puis complète avec `catalogueproduits.mlp.fr` pour découvrir tous les magazines Disney actifs (DE n'étant pas exhaustif)
 - Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
 - Pour chaque nouveau numéro détecté, il interroge MLP pour récupérer la date de relève prévisionnelle (« Jusqu'au »)
