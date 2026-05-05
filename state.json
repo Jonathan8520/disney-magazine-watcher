@@ -1,24 +1,4 @@
 {
-  "18658": {
-    "name": "Picsou Soir",
-    "numero": "2",
-    "date_entree": "05/05/2026",
-    "date_sortie": "08/08/2026",
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/18658_picsou-soir_2",
-    "inducks_url": null,
-    "detected_at": "2026-05-05T22:24:19.727506"
-  },
-  "13159": {
-    "name": "Picsou Magazine",
-    "numero": "594",
-    "date_entree": "05/05/2026",
-    "date_sortie": "04/07/2026",
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_594",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++594",
-    "detected_at": "2026-05-05T22:24:25.204918"
-  },
   "15599": {
     "name": "SPG HS Dynastie de Picsou (REV)",
     "numero": "2H",
@@ -28,16 +8,6 @@
     "url": "https://direct-editeurs.fr/magazine/15599_super-picsou-geant-hs-bd-dynastie-de-picsou-rev_2",
     "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+H2",
     "detected_at": "2026-05-05T22:24:30.252130"
-  },
-  "15681": {
-    "name": "Picsou Magazine HS Collection Deluxe",
-    "numero": "3H",
-    "date_entree": "08/04/2026",
-    "date_sortie": "05/10/2026",
-    "prix": "12.95 €",
-    "url": "https://direct-editeurs.fr/magazine/15681_picsou-magazine-hs-collection-deluxe_3",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FCD++++3",
-    "detected_at": "2026-05-05T22:24:35.426626"
   },
   "14068": {
     "name": "Les Trésors de Picsou",
