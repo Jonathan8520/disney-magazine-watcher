@@ -111,7 +111,7 @@ def parse_block(block):
     return {
         "codif": codif_m.group(1),
         "numero": num_m.group(1) if num_m else None,
-        "date_entree": paru_m.group(1) if paru_m else None,
+        "date_mise_en_vente": paru_m.group(1) if paru_m else None,
         "prix": re.sub(r"\s+", " ", prix_m.group(1)).strip() if prix_m else None,
         "expired_on": expired_m.group(1) if expired_m else None,
         "cover_url": cover_url,
@@ -197,7 +197,7 @@ def _mlp_session():
 
 def fetch_mlp_product(codif):
     """POST recherche MLP par codif → page produit.
-    Retourne un dict (codif, site_name, numero, date_entree, date_sortie, prix,
+    Retourne un dict (codif, site_name, numero, date_mise_en_vente, date_retrait, prix,
     cover_url, url, slug, expired_on) ou None si introuvable."""
     try:
         s, viewstate = _mlp_session()
@@ -241,8 +241,8 @@ def fetch_mlp_product(codif):
             "codif": codif,
             "site_name": find("_tit1") or "",
             "numero": num_match.group(1) if num_match else None,
-            "date_entree": date("spanJe", "spanMe", "spanAe"),
-            "date_sortie": date("spanJs", "spanMs", "spanAs"),
+            "date_mise_en_vente": date("spanJe", "spanMe", "spanAe"),
+            "date_retrait": date("spanJs", "spanMs", "spanAs"),
             "prix": find("_prix"),
             "cover_url": cover,
             "url": r1.url,
@@ -350,10 +350,10 @@ def send_discord(name, emoji, color, info, inducks_code=None):
     }
     if inducks_url:
         embed["description"] = f"[📋 Sommaire sur Inducks]({inducks_url})"
-    if info["date_entree"]:
-        embed["fields"].append({"name": "📅 En kiosque depuis", "value": info["date_entree"], "inline": True})
-    if info.get("date_sortie"):
-        embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_sortie"], "inline": True})
+    if info["date_mise_en_vente"]:
+        embed["fields"].append({"name": "📅 En kiosque depuis", "value": info["date_mise_en_vente"], "inline": True})
+    if info.get("date_retrait"):
+        embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_retrait"], "inline": True})
     if info.get("prix"):
         embed["fields"].append({"name": "💶 Prix", "value": info["prix"], "inline": True})
     if info["cover_url"]:
@@ -408,29 +408,40 @@ def main():
             continue
 
         print(f"  🆕 Nouveau numéro : n°{numero} (précédent : {last_known})")
-        # date_sortie peut déjà être renseignée si l'info vient de fetch_mlp_product
+        # date_retrait peut déjà être renseignée si l'info vient de fetch_mlp_product
         # (cas des magazines MLP-only). Sinon on fait le lookup MLP maintenant.
-        if not info.get("date_sortie"):
+        if not info.get("date_retrait"):
             mlp_info = fetch_mlp_product(codif)
-            info["date_sortie"] = mlp_info.get("date_sortie") if mlp_info else None
-        try:
-            send_discord(name, emoji, color, info, inducks_code=ov.get("inducks"))
-        except Exception as e:
-            print(f"  ❌ Erreur Discord : {e}")
-            continue
+            info["date_retrait"] = mlp_info.get("date_retrait") if mlp_info else None
+        # Numéro déjà retiré de la vente : on enregistre dans le state pour garder
+        # la trace, mais on ne notifie pas (analogue au filtre 'Trop vieux' DE,
+        # appliqué au flux MLP qui ne pré-filtre pas).
+        notify = True
+        if info.get("date_retrait"):
+            d, m, y = info["date_retrait"].split("/")
+            if datetime(int(y), int(m), int(d)).date() < datetime.now().date():
+                notify = False
+                print(f"  🔇 Périmé ({info['date_retrait']}) — ajouté au state sans notif")
+        if notify:
+            try:
+                send_discord(name, emoji, color, info, inducks_code=ov.get("inducks"))
+            except Exception as e:
+                print(f"  ❌ Erreur Discord : {e}")
+                continue
         state[codif] = {
             "name": name,
             "numero": numero,
-            "date_entree": info["date_entree"],
-            "date_sortie": info["date_sortie"],
+            "date_mise_en_vente": info["date_mise_en_vente"],
+            "date_retrait": info["date_retrait"],
             "prix": info.get("prix"),
             "url": info["url"],
             "inducks_url": build_inducks_url(ov.get("inducks"), numero),
             "detected_at": datetime.utcnow().isoformat(),
         }
         updated = True
-        # Throttle pour rester sous la limite Discord (~5 webhooks/s).
-        time.sleep(1)
+        if notify:
+            # Throttle pour rester sous la limite Discord (~5 webhooks/s).
+            time.sleep(1)
 
     if updated:
         save_state(state)
