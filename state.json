@@ -258,5 +258,55 @@
     "url": "https://direct-editeurs.fr/magazine/15681_picsou-magazine-hs-collection-deluxe_3",
     "inducks_url": "https://inducks.org/issue.php?c=fr%2FCD++++3",
     "detected_at": "2026-05-05T22:51:16.887202"
+  },
+  "18360": {
+    "name": "Nouvelle Jeunesse de Picsou",
+    "numero": "1H",
+    "date_entree": "27/06/2025",
+    "date_sortie": "24/12/2025",
+    "prix": "12,95 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=AMi960a4hYk%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-05-07T09:40:17.984729"
+  },
+  "17575": {
+    "name": "Picsou Anniversaire en or",
+    "numero": "1H",
+    "date_entree": "31/10/2025",
+    "date_sortie": "29/01/2026",
+    "prix": "8,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=N3OjKVUydUM%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-05-07T09:40:19.119503"
+  },
+  "19052": {
+    "name": "Pochette Picsou Magazine",
+    "numero": "2H",
+    "date_entree": "08/07/2025",
+    "date_sortie": "06/10/2025",
+    "prix": "11,90 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=wa%2bYbOzlvIc%3d&par_num=WZWt8yVGzVY%3d",
+    "inducks_url": null,
+    "detected_at": "2026-05-07T09:40:20.234926"
+  },
+  "12651": {
+    "name": "SPG HS Dynastie de Picsou",
+    "numero": "6H",
+    "date_entree": "08/10/2025",
+    "date_sortie": "07/01/2026",
+    "prix": "6,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=Dk1SWMWwbRU%3d&par_num=B6hY%2bdoTkz0%3d",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+H6",
+    "detected_at": "2026-05-07T09:40:21.433805"
+  },
+  "13459": {
+    "name": "SPG HS Jeux",
+    "numero": "7H",
+    "date_entree": "22/11/2025",
+    "date_sortie": "20/02/2026",
+    "prix": "5,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=tXvt7NRAQRw%3d&par_num=%2fsdl2336kTk%3d",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+J7",
+    "detected_at": "2026-05-07T09:40:22.597049"
   }
 }
