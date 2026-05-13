@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3854-3855",
-    "date_mise_en_vente": "29/04/2026",
-    "date_retrait": "13/05/2026",
+    "numero": "3856-3857",
+    "date_mise_en_vente": "13/05/2026",
+    "date_retrait": "27/05/2026",
     "prix": "4.9 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3854-3855",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3854-55",
-    "detected_at": "2026-05-05T22:25:00.769688"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3856-3857",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3856-57",
+    "detected_at": "2026-05-13T06:53:36.121890"
   },
   "15528": {
     "name": "Mickey Junior",
