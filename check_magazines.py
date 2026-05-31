@@ -5,6 +5,7 @@ import re
 import time
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # ── Config ────────────────────────────────────────────────────────────────────
 # Mots-clés utilisés pour découvrir automatiquement les magazines Disney.
@@ -74,6 +75,15 @@ OVERRIDES = {
 }
 DEFAULT_EMOJI = "🦆"
 DEFAULT_COLOR = 0x808080
+
+# Fenêtre calme (heure Paris, DST-aware) : on saute toute la run.
+# On ne notifie PAS et on ne met PAS à jour le state pour ne pas masquer un
+# nouveau numéro qui paraîtrait pendant cette plage (sinon la run du matin ne
+# verrait plus la diff). Bornes inclusives sur l'heure de début, exclusives sur
+# l'heure de fin : [QUIET_START, QUIET_END[.
+QUIET_TZ = ZoneInfo("Europe/Paris")
+QUIET_START = 23  # 23h00
+QUIET_END = 7     # 07h00
 
 SEARCH_URL = "https://direct-editeurs.fr/nos-magazines"
 SITE_BASE = "https://direct-editeurs.fr"
@@ -408,6 +418,15 @@ def send_discord(name, emoji, color, info, inducks_code=None):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
+    # Heures calmes : on quitte avant tout, sans même charger l'état (la
+    # première run en sortie de plage repèrera les nouveautés de la nuit).
+    hour = datetime.now(QUIET_TZ).hour
+    in_quiet = (QUIET_START <= hour) or (hour < QUIET_END) if QUIET_START > QUIET_END \
+               else (QUIET_START <= hour < QUIET_END)
+    if in_quiet:
+        print(f"😴 Heures calmes ({QUIET_START}h-{QUIET_END}h Paris, il est {hour}h) — run sautée.")
+        return
+
     state = load_state()
     updated = False
 
