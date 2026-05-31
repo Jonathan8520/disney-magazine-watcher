@@ -18,6 +18,13 @@ SKIP_CODIFS = {
     "11560",  # ANIME CULT (classé à tort en sous-famille Disney D23)
 }
 
+# Codifs qui paraissent systématiquement par lots de deux numéros (bi-issue).
+# Quand DE/MLP ne publient que la forme simple N (oubli éditeur), on synthétise
+# N-(N+1) pour rester sur la forme canonique et éviter de manquer la notif.
+BI_ISSUE_CODIFS = {
+    "14067",  # Journal de Mickey
+}
+
 # Override manuel pour les magazines principaux : emoji et couleur dédiés.
 # Pour tous les autres, on utilise DEFAULT_EMOJI / DEFAULT_COLOR.
 # `inducks` = code de la série dans la base Inducks (https://inducks.org).
@@ -125,12 +132,14 @@ def discover_de():
     Les magazines marqués 'Trop vieux' (date passée) sont ignorés.
 
     DE indexe parfois plusieurs entrées par codif pour la même parution (ex: JdM
-    apparaît à la fois en n°3854 et n°3854-3855). On préfère systématiquement le
-    format à tiret quand il existe : c'est la forme canonique côté éditeur (le
-    JdM sort désormais par lots de 2) et celle qu'utilise Inducks."""
+    apparaît à la fois en n°3854 et n°3854-3855). On garde l'entrée la plus
+    récente par 'Paru le' ; à date égale, on préfère le format à tiret (forme
+    canonique éditeur + Inducks). Ne PAS préférer le tiret sans regarder la
+    date, sinon un dash plus vieux écrase un simple plus récent — typique quand
+    l'éditeur publie le simple avant le tiret pour le numéro suivant."""
     s = get_session()
     today = datetime.now().date()
-    by_codif = {}
+    candidates = {}  # codif → list of info dicts (dédupliqués par numero)
     for kw in KEYWORDS:
         r = s.post(SEARCH_URL, data={"searchParution.title": kw}, timeout=15)
         r.raise_for_status()
@@ -146,14 +155,31 @@ def discover_de():
                 d, m, y = info["expired_on"].split("/")
                 if datetime(int(y), int(m), int(d)).date() < today:
                     continue
-            existing = by_codif.get(info["codif"])
-            # Garde la première entrée vue, sauf si elle est en format simple
-            # alors qu'on découvre une variante à tiret (3854 → 3854-3855).
-            if existing is None or (
-                "-" not in (existing["numero"] or "") and "-" in (info["numero"] or "")
-            ):
-                by_codif[info["codif"]] = info
-    return by_codif
+            lst = candidates.setdefault(info["codif"], [])
+            if not any(c["numero"] == info["numero"] for c in lst):
+                lst.append(info)
+
+    def freshness(info):
+        d = info.get("date_mise_en_vente")
+        try:
+            dd, mm, yy = d.split("/")
+            parsed = datetime(int(yy), int(mm), int(dd))
+        except (AttributeError, ValueError):
+            parsed = datetime.min
+        has_dash = "-" in (info.get("numero") or "")
+        return (parsed, has_dash)  # tri décroissant : (date, dash) — dash préféré à date égale
+
+    picked = {codif: max(lst, key=freshness) for codif, lst in candidates.items()}
+
+    # Bi-issue : si le plus récent est sous forme simple "N", on le réécrit en
+    # "N-(N+1)" (l'URL reste sur la page simple, c'est la page réellement publiée).
+    for codif, info in picked.items():
+        if codif in BI_ISSUE_CODIFS and info.get("numero") and "-" not in info["numero"]:
+            m = re.match(r"(\d+)$", info["numero"])
+            if m:
+                n = int(m.group(1))
+                info["numero"] = f"{n}-{n + 1}"
+    return picked
 
 def discover():
     """Découverte hybride : Direct Éditeurs (riche, structuré) + MLP en complément
