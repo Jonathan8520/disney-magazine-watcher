@@ -453,11 +453,23 @@ def main():
             continue
 
         print(f"  🆕 Nouveau numéro : n°{numero} (précédent : {last_known})")
-        # date_retrait peut déjà être renseignée si l'info vient de fetch_mlp_product
-        # (cas des magazines MLP-only). Sinon on fait le lookup MLP maintenant.
-        if not info.get("date_retrait"):
-            mlp_info = fetch_mlp_product(codif)
-            info["date_retrait"] = mlp_info.get("date_retrait") if mlp_info else None
+        # Enrichissement MLP : on l'interroge systématiquement à la notif pour
+        # avoir date_retrait (DE ne l'a pas) ET corriger le prix (DE est parfois
+        # désynchro — ex: JdM affiché 4,9€ alors que le vrai prix MLP est 5,9€).
+        # Garde-fou : on ne copie depuis MLP que si la base numérique correspond
+        # (DE="3858" ou "3858-3859" ↔ MLP="3858H" : même magazine, prix valide ;
+        # mais si MLP est en retard et renvoie 3856, on ne mélange pas).
+        mlp_info = fetch_mlp_product(codif) if "mlp.fr" not in info["url"] else None
+        def _num_base(s):
+            m = re.match(r"\d+", s or "")
+            return m.group(0) if m else None
+        if mlp_info and _num_base(mlp_info.get("numero")) == _num_base(numero):
+            if not info.get("date_retrait"):
+                info["date_retrait"] = mlp_info.get("date_retrait")
+            if mlp_info.get("prix"):
+                info["prix"] = mlp_info["prix"]
+        elif mlp_info:
+            print(f"  ⚠️  MLP renvoie n°{mlp_info.get('numero')} ≠ DE n°{numero} — pas d'enrichissement")
         # Numéro déjà retiré de la vente : on enregistre dans le state pour garder
         # la trace, mais on ne notifie pas (analogue au filtre 'Trop vieux' DE,
         # appliqué au flux MLP qui ne pré-filtre pas).
