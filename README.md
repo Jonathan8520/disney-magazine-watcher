@@ -21,6 +21,17 @@ Magazines principaux (avec emoji/couleur dédiés via `OVERRIDES` dans `check_ma
 
 Tous les autres magazines / HS découverts sont notifiés avec un emoji 🦆 par défaut.
 
+## BD Disney chez Glénat 📚
+
+En plus des magazines, le watcher surveille les **albums BD Disney édités par Glénat** (Picsou, Mickey, Donald, Fantomiald, Romano Scarpa, Don Rosa…) via la page collection `glenat.com/bd/collections/disney`. Le slug éditeur `/glenat-disney/` filtre le Disney sans ambiguïté.
+
+Chaque album peut déclencher **deux notifications distinctes**, parfois à plusieurs mois d'intervalle :
+
+- 📢 **Annonce** — quand l'album apparaît « à paraître » dans le catalogue
+- 📚 **Sortie** — quand sa date de parution est atteinte (mise en librairie)
+
+L'état Glénat est stocké dans le même `state.json` sous des clés `glenat:<EAN>` (l'EAN à 13 chiffres ne peut pas entrer en collision avec les codifs des magazines à 5 chiffres). Au tout premier run, le catalogue existant est enregistré **en silence** (pas de flood) ; seules les nouveautés et sorties ultérieures notifient.
+
 ## Setup (5 minutes)
 
 ### 1. Fork / Clone ce repo sur GitHub
@@ -50,6 +61,7 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 - Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
 - Pour chaque nouveau numéro détecté, il interroge MLP pour récupérer la date de relève prévisionnelle (« Jusqu'au »)
 - Notification Discord avec titre, numéro, prix, date de parution, date de relève et couverture en grand
+- En complément, il surveille les **BD Disney chez Glénat** (voir la section dédiée ci-dessus) sur le même webhook
 - Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
 - Throttle 1s + retry automatique sur 429 pour respecter la limite Discord (~5 webhooks/s)
 
