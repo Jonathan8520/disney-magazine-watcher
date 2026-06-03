@@ -92,6 +92,17 @@ MLP_FAMILY_URL = "https://catalogueproduits.mlp.fr/liste.aspx?ssFam={}"
 # Sous-familles MLP qu'on agrège côté découverte. D23 = "Disney" (Incontournables,
 # Destin de Picsou, Souvenirs du Klondike, etc. — magazines spéciaux Disney).
 MLP_FAMILIES = ["D23"]
+
+# Glénat — éditeur des albums BD Disney en France (Picsou, Mickey, Donald,
+# Fantomiald, Romano Scarpa, Don Rosa…). On surveille la page collection Disney,
+# triée du plus récent au plus ancien : nouveautés et « à paraître » sont toujours
+# en page 1, donc un seul fetch suffit. Le slug éditeur /glenat-disney/ filtre le
+# Disney sans ambiguïté. État stocké dans le même state.json sous clés préfixées
+# `glenat:<EAN>` (13 chiffres → aucune collision avec les codifs 5 chiffres).
+GLENAT_COLLECTION_URL = "https://www.glenat.com/bd/collections/disney"
+GLENAT_BASE = "https://www.glenat.com"
+GLENAT_KEY_PREFIX = "glenat:"
+
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; MagazineWatcher/1.0)"}
@@ -338,6 +349,20 @@ def save_state(state):
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 # ── Discord ───────────────────────────────────────────────────────────────────
+def _post_discord(payload):
+    """POST le payload au webhook en gérant le rate limit Discord (~5 req/s) :
+    retry jusqu'à 4 fois en respectant l'en-tête Retry-After."""
+    for _ in range(4):
+        r = requests.post(DISCORD_WEBHOOK, json=payload, timeout=10)
+        if r.status_code == 429:
+            retry_after = float(r.json().get("retry_after", 1))
+            print(f"  ⏳ Rate limit Discord, attente {retry_after:.1f}s")
+            time.sleep(retry_after + 0.3)
+            continue
+        r.raise_for_status()
+        return
+    raise RuntimeError("Discord rate limit non résolu après plusieurs tentatives")
+
 def build_inducks_url(inducks, numero):
     """Construit l'URL Inducks pour un numéro. Format: 'fr/<CODE><ISSUE>' où
     l'issue est cadré à droite sur N caractères, éventuellement avec un préfixe
@@ -402,19 +427,226 @@ def send_discord(name, emoji, color, info, inducks_code=None):
         "content": f"{headline} — {name}",
         "embeds": [embed],
     }
-    # Discord webhook limit ~5 req/s : on retry sur 429 en respectant Retry-After.
-    for _ in range(4):
-        r = requests.post(DISCORD_WEBHOOK, json=payload, timeout=10)
-        if r.status_code == 429:
-            retry_after = float(r.json().get("retry_after", 1))
-            print(f"  ⏳ Rate limit Discord, attente {retry_after:.1f}s")
-            time.sleep(retry_after + 0.3)
-            continue
-        r.raise_for_status()
-        break
-    else:
-        raise RuntimeError("Discord rate limit non résolu après plusieurs tentatives")
+    _post_discord(payload)
     print(f"  ✅ Notification Discord envoyée pour {name} n°{info['numero']}")
+
+# ── Glénat (BD Disney) ────────────────────────────────────────────────────────
+# Deux événements distincts peuvent notifier pour un même album, parfois à des
+# mois d'intervalle :
+#   1. ANNONCE — l'album apparaît « à paraître » (tag `soon`)            → 📢
+#   2. SORTIE  — sa date de parution est atteinte (tag `new` / date)     → 📚
+# Un album du fonds (aucun tag) qui apparaît est enregistré en silence pour ne
+# pas notifier d'anciens albums (ex: bloc « à découvrir »). Au tout premier run
+# (aucune clé `glenat:`), on seed tout en silence.
+_GLENAT_CARD_RE = re.compile(
+    r'<a[^>]*href="(/glenat-disney/[a-z0-9-]+-(\d{13})/)"(.*?)</a>',
+    re.DOTALL | re.IGNORECASE,
+)
+_GLENAT_TITLE_RE = re.compile(r'class="[^"]*\bTitle\b[^"]*"[^>]*>([^<]+)<')
+_GLENAT_ARIA_RE = re.compile(r'aria-label="([^"]+)"')
+_GLENAT_DATE_RE = re.compile(r'class="[^"]*\bReleaseDate\b[^"]*"[^>]*>\s*(\d{2}/\d{2}/\d{4})')
+_GLENAT_TAG_RE = re.compile(r'type="(soon|new)"')
+
+def _parse_glenat_cards(text):
+    """Extrait les cartes BD Disney : ean, titre, date (dd/mm/yyyy), tag, url.
+    `tag` vaut 'soon' (à paraître), 'new' (sortie récente) ou None (fonds)."""
+    out, seen = [], set()
+    for href, ean, body in _GLENAT_CARD_RE.findall(text):
+        if ean in seen:
+            continue
+        seen.add(ean)
+        tm = _GLENAT_TITLE_RE.search(body) or _GLENAT_ARIA_RE.search(body)
+        dm = _GLENAT_DATE_RE.search(body)
+        tag = _GLENAT_TAG_RE.search(body)
+        out.append({
+            "ean": ean,
+            "title": html.unescape(tm.group(1)).strip() if tm else None,
+            "date": dm.group(1) if dm else None,
+            "tag": tag.group(1) if tag else None,
+            "url": GLENAT_BASE + href,
+        })
+    return out
+
+def discover_glenat():
+    """Liste les BD Disney de la page collection Glénat (page 1, récent→ancien)."""
+    try:
+        r = requests.get(GLENAT_COLLECTION_URL, headers=HEADERS, timeout=20)
+        r.raise_for_status()
+        r.encoding = "utf-8"  # le serveur annonce ISO-8859-1 à tort → forcer UTF-8
+        return _parse_glenat_cards(r.text)
+    except Exception as e:
+        print(f"⚠️  discover_glenat échoué : {e}")
+        return []
+
+def fetch_glenat_product(url):
+    """Enrichit un album via sa fiche : cover HD, prix, série, collection, résumé.
+    Tout est dans le blob __NEXT_DATA__ (props.pageProps.data)."""
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=20)
+        r.raise_for_status()
+        r.encoding = "utf-8"
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.DOTALL)
+        if not m:
+            return {}
+        d = json.loads(m.group(1))["props"]["pageProps"]["data"]
+        ean = d.get("ean", "")
+        cov = re.search(
+            rf'https://media\.hachette\.fr/fit-in/\d+x\d+/imgArticle/GLENAT/\d+/{ean}-001-X\.jpe?g[^"\\]*',
+            r.text,
+        )
+        resume = re.sub(r"<[^>]+>", "", html.unescape(d.get("resume") or "")).strip()
+        return {
+            "title": d.get("titre_de_couverture"),
+            "serie": d.get("serie_label"),
+            "collection": d.get("collection_label"),
+            "prix": d.get("prix_ttc"),
+            "resume": resume,
+            # html.unescape : l'URL brute contient &amp; (encodé HTML) → &
+            "cover_url": html.unescape(cov.group(0)) if cov else None,
+        }
+    except Exception as e:
+        print(f"  ⚠️  Fiche Glénat échouée ({url}) : {e}")
+        return {}
+
+def send_glenat_discord(item, enrich, kind):
+    """Notifie un album BD Disney Glénat. kind = 'announced' | 'released'."""
+    title = enrich.get("title") or item["title"] or "BD Disney"
+    if kind == "released":
+        emoji, color = "📚", 0x009688
+        headline = "📚 **BD Disney en librairie !**"
+        date_label = "📅 En librairie le"
+    else:
+        emoji, color = "📆", 0x3F51B5
+        headline = "📢 **Nouvelle BD Disney annoncée !**"
+        date_label = "🗓️ Parution prévue le"
+    embed = {
+        "title": f"{emoji} {title}",
+        "url": item["url"],
+        "color": color,
+        "fields": [],
+        "footer": {"text": "Source : glenat.com (Glénat Disney)"},
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+    desc = []
+    if enrich.get("serie"):
+        desc.append(f"*Série : {enrich['serie']}*")
+    if enrich.get("resume"):
+        txt = enrich["resume"]
+        desc.append(txt[:300] + ("…" if len(txt) > 300 else ""))
+    if desc:
+        embed["description"] = "\n".join(desc)
+    if item.get("date"):
+        embed["fields"].append({"name": date_label, "value": item["date"], "inline": True})
+    if enrich.get("prix"):
+        embed["fields"].append({"name": "💶 Prix", "value": f"{enrich['prix']} €", "inline": True})
+    if enrich.get("collection"):
+        embed["fields"].append({"name": "📚 Collection", "value": enrich["collection"], "inline": True})
+    if enrich.get("cover_url"):
+        embed["image"] = {"url": enrich["cover_url"]}
+    _post_discord({"content": f"{headline} — {title}", "embeds": [embed]})
+    print(f"  ✅ Notif Glénat envoyée ({kind}) : {title}")
+
+def check_glenat(state):
+    """Surveille les BD Disney Glénat. Retourne True si le state a changé.
+    Clés `glenat:<EAN>`. 1er run (aucune clé glenat:) = seed silencieux."""
+    print("\n📚 Découverte des BD Disney (Glénat)…")
+    items = discover_glenat()
+    if not items:
+        print("   (aucune carte récupérée — state Glénat inchangé)")
+        return False
+    print(f"   {len(items)} BD Disney en page 1")
+
+    seeding = not any(k.startswith(GLENAT_KEY_PREFIX) for k in state)
+    if seeding:
+        print("   🌱 1er run Glénat : seed silencieux (aucune notif)")
+    today = datetime.now().date()
+    now = datetime.utcnow().isoformat()
+    updated = False
+
+    def _parse_fr(d):
+        try:
+            dd, mm, yy = d.split("/")
+            return datetime(int(yy), int(mm), int(dd)).date()
+        except (AttributeError, ValueError):
+            return None
+
+    for item in items:
+        key = GLENAT_KEY_PREFIX + item["ean"]
+        live_date = _parse_fr(item.get("date"))
+        is_out = (live_date is not None and live_date <= today) or item.get("tag") == "new"
+        st = state.get(key)
+
+        # ── Seed : on enregistre tout sans notifier ──────────────────────────
+        if seeding:
+            state[key] = {
+                "title": item["title"], "date_parution": item.get("date"),
+                "url": item["url"], "announced_at": now,
+                "released_at": now if is_out else None, "seeded": True,
+            }
+            updated = True
+            continue
+
+        # ── Nouvel album jamais vu ───────────────────────────────────────────
+        if st is None:
+            tag = item.get("tag")
+            if tag == "soon":
+                kind = "announced"
+            elif tag == "new":
+                kind = "released"
+            else:
+                # Fonds de catalogue sans tag (souvent un bloc « à découvrir ») :
+                # on l'enregistre en silence pour ne pas notifier d'anciens albums.
+                # NB : on classe une *première apparition* au tag seul ; la date
+                # (is_out) ne sert qu'à la transition d'un album déjà connu.
+                state[key] = {
+                    "title": item["title"], "date_parution": item.get("date"),
+                    "url": item["url"], "announced_at": now,
+                    "released_at": now if is_out else None, "backfilled": True,
+                }
+                updated = True
+                continue
+            enrich = fetch_glenat_product(item["url"])
+            print(f"   🆕 {item['title']} ({item['ean']}) → {kind}")
+            try:
+                send_glenat_discord(item, enrich, kind)
+                sent = True
+            except Exception as e:
+                print(f"   ❌ Erreur Discord Glénat : {e}")
+                sent = False
+            state[key] = {
+                "title": enrich.get("title") or item["title"],
+                "serie": enrich.get("serie"),
+                "date_parution": item.get("date"),
+                "prix": enrich.get("prix"),
+                "url": item["url"],
+                "cover_url": enrich.get("cover_url"),
+                "announced_at": now,
+                "released_at": now if kind == "released" else None,
+                "detected_at": now,
+            }
+            updated = True
+            if sent:
+                time.sleep(1)
+            continue
+
+        # ── Album connu : notif « sortie » quand la date est atteinte ────────
+        if st.get("released_at") is None and is_out:
+            enrich = fetch_glenat_product(item["url"])
+            print(f"   📚 {item['title']} ({item['ean']}) → date atteinte (released)")
+            try:
+                send_glenat_discord(item, enrich, "released")
+            except Exception as e:
+                print(f"   ❌ Erreur Discord Glénat : {e}")
+            st["released_at"] = now
+            st["date_parution"] = item.get("date")
+            if enrich.get("prix"):
+                st["prix"] = enrich["prix"]
+            if enrich.get("cover_url"):
+                st["cover_url"] = enrich["cover_url"]
+            updated = True
+            time.sleep(1)
+
+    return updated
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
@@ -499,6 +731,14 @@ def main():
         if notify:
             # Throttle pour rester sous la limite Discord (~5 webhooks/s).
             time.sleep(1)
+
+    # BD Disney chez Glénat (même webhook, même state.json). Isolé du flux
+    # magazines : une erreur ici ne doit jamais faire échouer la run principale.
+    try:
+        if check_glenat(state):
+            updated = True
+    except Exception as e:
+        print(f"⚠️  Bloc Glénat ignoré (erreur inattendue) : {e}")
 
     if updated:
         save_state(state)
