@@ -191,13 +191,13 @@
   },
   "12825": {
     "name": "SPG HS Super Donald Géant",
-    "numero": "6H",
-    "date_mise_en_vente": "18/12/2025",
-    "date_retrait": "18/03/2026",
+    "numero": "7H",
+    "date_mise_en_vente": "04/06/2026",
+    "date_retrait": "07/09/2026",
     "prix": "8,50 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=HL3%2fNLK7fX8%3d&par_num=B6hY%2bdoTkz0%3d",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+D6",
-    "detected_at": "2026-05-05T22:26:00.028352"
+    "url": "https://direct-editeurs.fr/magazine/12825_super-picsou-geant-hs-super-donald-geant_7",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+D7",
+    "detected_at": "2026-06-04T08:56:08.674156"
   },
   "19064": {
     "name": "Les Incontournables (REV)",
@@ -308,5 +308,197 @@
     "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=tXvt7NRAQRw%3d&par_num=%2fsdl2336kTk%3d",
     "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+J7",
     "detected_at": "2026-05-07T09:40:22.597049"
+  },
+  "glenat:9782344075210": {
+    "title": "Les Âges d'or de Picsou - Tome 03",
+    "date_parution": "23/09/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-picsou-tome-03-9782344075210/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": null,
+    "seeded": true
+  },
+  "glenat:9782344075203": {
+    "title": "Les Âges d'or de Mickey - Tome 03",
+    "date_parution": "05/08/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-mickey-tome-03-9782344075203/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": null,
+    "seeded": true
+  },
+  "glenat:9782344075128": {
+    "title": "La Grande Histoire de Picsou - Tome 03",
+    "date_parution": "10/06/2026",
+    "url": "https://www.glenat.com/glenat-disney/la-grande-histoire-de-picsou-tome-03-9782344075128/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": null,
+    "seeded": true
+  },
+  "glenat:9782344070697": {
+    "title": "Les Âges d'or de Picsou - Tome 02",
+    "date_parution": "20/05/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-picsou-tome-02-9782344070697/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344070659": {
+    "title": "Les Âges d'or de Donald - Tome 02",
+    "date_parution": "13/05/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-donald-tome-02-9782344070659/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344070673": {
+    "title": "Les Âges d'or de Mickey - Tome 02",
+    "date_parution": "18/02/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-mickey-tome-02-9782344070673/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344074091": {
+    "title": "La Grande Histoire de Picsou - Tome 02",
+    "date_parution": "11/02/2026",
+    "url": "https://www.glenat.com/glenat-disney/la-grande-histoire-de-picsou-t02-9782344074091/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344051115": {
+    "title": "Mickey et le roi des pirates",
+    "date_parution": "02/01/2026",
+    "url": "https://www.glenat.com/glenat-disney/mickey-roi-des-pirates-9782344051115/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344070642": {
+    "title": "Les Âges d'or de Donald - Tome 01",
+    "date_parution": "02/01/2026",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-donald-tome-01-9782344070642/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344072578": {
+    "title": "La Grande Histoire de Picsou - Tome 01",
+    "date_parution": "03/12/2025",
+    "url": "https://www.glenat.com/glenat-disney/la-grande-histoire-de-picsou-par-don-rosa-tome-01-9782344072578/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344070680": {
+    "title": "Les Âges d'or de Picsou - Tome 01",
+    "date_parution": "19/11/2025",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-picsou-tome-01-9782344070680/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344070666": {
+    "title": "Les Âges d'or de Mickey - Tome 01",
+    "date_parution": "19/11/2025",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-mickey-tome-01-9782344070666/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344062081": {
+    "title": "Picsou et les bit-coincoins - Collector",
+    "date_parution": "08/10/2025",
+    "url": "https://www.glenat.com/glenat-disney/disney-glenat-picsou-et-les-bit-coincoins-collector-9782344062081/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344071304": {
+    "title": "Picsou et les Bit-coincoins",
+    "date_parution": "08/10/2025",
+    "url": "https://www.glenat.com/glenat-disney/disney-glenat-picsou-et-les-bit-coincoins-9782344071304/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344044452": {
+    "title": "Un travail pour Fantomiald",
+    "date_parution": "09/10/2024",
+    "url": "https://www.glenat.com/glenat-disney/un-travail-pour-fantomiald-9782344044452/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344056448": {
+    "title": "Mickey contre l'alliance maléfique",
+    "date_parution": "15/05/2024",
+    "url": "https://www.glenat.com/glenat-disney/mickey-contre-lalliance-malefique-9782344056448/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344062388": {
+    "title": "Les Grandes aventures de Romano Scarpa - Tome 15",
+    "date_parution": "14/02/2024",
+    "url": "https://www.glenat.com/glenat-disney/les-grandes-aventures-de-romano-scarpa-tome-15-9782344062388/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344062395": {
+    "title": "Le Retour de la souris du futur",
+    "date_parution": "07/02/2024",
+    "url": "https://www.glenat.com/glenat-disney/le-retour-de-la-souris-du-futur-9782344062395/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344061114": {
+    "title": "Winnie l'ourson Anthologie",
+    "date_parution": "08/11/2023",
+    "url": "https://www.glenat.com/glenat-disney/winnie-lourson-anthologie-9782344061114/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344061138": {
+    "title": "Fantomiald Intégrale - Tome 11",
+    "date_parution": "02/11/2023",
+    "url": "https://www.glenat.com/glenat-disney/fantomiald-integrale-tome-11-9782344061138/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344060810": {
+    "title": "Les Grandes aventures de Romano Scarpa - Tome 14",
+    "date_parution": "18/10/2023",
+    "url": "https://www.glenat.com/glenat-disney/les-grandes-aventures-de-romano-scarpa-tome-14-9782344060810/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344061084": {
+    "title": "La Souris du futur",
+    "date_parution": "04/10/2023",
+    "url": "https://www.glenat.com/glenat-disney/la-souris-du-futur-9782344061084/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344057889": {
+    "title": "Fantomiald Intégrale - Tome 10",
+    "date_parution": "05/07/2023",
+    "url": "https://www.glenat.com/glenat-disney/fantomiald-integrale-tome-10-9782344057889/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
+  },
+  "glenat:9782344053089": {
+    "title": "Les Grandes aventures de Romano Scarpa - Tome 13",
+    "date_parution": "01/03/2023",
+    "url": "https://www.glenat.com/glenat-disney/les-grandes-aventures-de-romano-scarpa-tome-13-9782344053089/",
+    "announced_at": "2026-06-04T08:56:10.220108",
+    "released_at": "2026-06-04T08:56:10.220108",
+    "seeded": true
   }
 }
