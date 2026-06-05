@@ -99,7 +99,9 @@ MLP_FAMILIES = ["D23"]
 # en page 1, donc un seul fetch suffit. Le slug éditeur /glenat-disney/ filtre le
 # Disney sans ambiguïté. État stocké dans le même state.json sous clés préfixées
 # `glenat:<EAN>` (13 chiffres → aucune collision avec les codifs 5 chiffres).
-GLENAT_COLLECTION_URL = "https://www.glenat.com/bd/collections/disney"
+# NB : /livres-glenat-disney/ est l'URL canonique (l'alias /bd/collections/disney
+# fait un 301 vers elle) — on tape la canonique pour éviter le hop de redirection.
+GLENAT_COLLECTION_URL = "https://www.glenat.com/livres-glenat-disney/"
 GLENAT_BASE = "https://www.glenat.com"
 GLENAT_KEY_PREFIX = "glenat:"
 

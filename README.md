@@ -23,7 +23,7 @@ Tous les autres magazines / HS découverts sont notifiés avec un emoji 🦆 par
 
 ## BD Disney chez Glénat 📚
 
-En plus des magazines, le watcher surveille les **albums BD Disney édités par Glénat** (Picsou, Mickey, Donald, Fantomiald, Romano Scarpa, Don Rosa…) via la page collection `glenat.com/bd/collections/disney`. Le slug éditeur `/glenat-disney/` filtre le Disney sans ambiguïté.
+En plus des magazines, le watcher surveille les **albums BD Disney édités par Glénat** (Picsou, Mickey, Donald, Fantomiald, Romano Scarpa, Don Rosa…) via la page `glenat.com/livres-glenat-disney/`. Le slug éditeur `/glenat-disney/` filtre le Disney sans ambiguïté.
 
 Chaque album peut déclencher **deux notifications distinctes**, parfois à plusieurs mois d'intervalle :
 
