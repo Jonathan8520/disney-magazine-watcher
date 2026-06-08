@@ -500,5 +500,65 @@
     "announced_at": "2026-06-04T08:56:10.220108",
     "released_at": "2026-06-04T08:56:10.220108",
     "seeded": true
+  },
+  "17563": {
+    "name": "JDM HS COLLECTION MYTHOLOGIE",
+    "numero": "3H",
+    "date_mise_en_vente": "19/07/2025",
+    "date_retrait": "17/10/2025",
+    "prix": "6,95 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=7jjN7hUy1oU%3d&par_num=8ZH%2fX3NJSZE%3d",
+    "inducks_url": null,
+    "detected_at": "2026-06-08T18:50:34.778801"
+  },
+  "17112": {
+    "name": "MEILLEUR DU JDM HS NOEL REV",
+    "numero": "1H",
+    "date_mise_en_vente": "19/11/2025",
+    "date_retrait": "18/02/2026",
+    "prix": "6,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=b%2fkMW31sKvo%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-06-08T18:50:34.778831"
+  },
+  "11065": {
+    "name": "LES MECHANTS SPG HS",
+    "numero": "1H",
+    "date_mise_en_vente": "06/06/2026",
+    "date_retrait": "04/09/2026",
+    "prix": "6,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=1VNav4SoK%2bk%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-06-08T18:50:34.886786"
+  },
+  "18279": {
+    "name": "POCH. GRIMOIRE MEIL JDM HS REV",
+    "numero": "4H",
+    "date_mise_en_vente": "28/11/2025",
+    "date_retrait": "26/02/2026",
+    "prix": "9,90 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=5PvoEAhVigA%3d&par_num=PUgu2bwXqc0%3d",
+    "inducks_url": null,
+    "detected_at": "2026-06-08T18:50:35.887001"
+  },
+  "18288": {
+    "name": "Picsou HS Castors Juniors",
+    "numero": "7H",
+    "date_mise_en_vente": "15/10/2025",
+    "date_retrait": "14/01/2026",
+    "prix": "6,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=1g1nSX4VlXA%3d&par_num=%2fsdl2336kTk%3d",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPMHS+S7",
+    "detected_at": "2026-06-08T18:50:35.887581"
+  },
+  "11363": {
+    "name": "MEILLEUR DU JDM HS NOEL",
+    "numero": "3H",
+    "date_mise_en_vente": "24/10/2025",
+    "date_retrait": "22/01/2026",
+    "prix": "6,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=em3MoZreg3I%3d&par_num=8ZH%2fX3NJSZE%3d",
+    "inducks_url": null,
+    "detected_at": "2026-06-08T18:50:35.887600"
   }
 }
