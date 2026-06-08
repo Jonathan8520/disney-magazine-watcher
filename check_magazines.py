@@ -11,7 +11,21 @@ from zoneinfo import ZoneInfo
 # Mots-clés utilisés pour découvrir automatiquement les magazines Disney.
 # Chaque mot-clé renvoie un sous-ensemble (avec recouvrement) ; on dédoublonne
 # ensuite par codif.
-KEYWORDS = ["picsou", "mickey", "mickey hs", "mickey parade", "fantomiald", "donald"]
+# MLP fait du match littéral : "super picsou geant" ne matche pas, mais "spg"
+# (l'abbréviation utilisée dans les titres MLP) trouve les SPG HS. Pareil pour
+# "jdm" qui ramène les HS Meilleur du JdM. Les abbréviations larges (mp, tp, li)
+# rapportent surtout du non-Disney mais le filtre description (DISNEY_MARKERS)
+# les écrémera automatiquement, donc on peut les ajouter sans risque si besoin.
+KEYWORDS = ["picsou", "mickey", "mickey hs", "mickey parade", "fantomiald",
+            "donald", "spg", "jdm"]
+
+# Marqueurs Disney recherchés dans la description (panelLog) MLP pour valider
+# qu'un codif MLP-only est bien Disney avant de le notifier. Permet d'élargir
+# les KEYWORDS sans craindre de polluer le state avec du non-Disney.
+DISNEY_MARKERS = (
+    "disney", "picsou", "donald", "mickey", "fantomiald", "castor junior",
+    "trésors de picsou", "tresors de picsou",
+)
 
 # Codifs à exclure explicitement (magazines mal catégorisés sur MLP qui matchent
 # nos sources de découverte sans être réellement Disney).
@@ -221,9 +235,23 @@ def discover():
         print(f"   ⤷ {len(extras)} magazines MLP-only à enrichir : {', '.join(sorted(extras))}")
     for codif in extras:
         info = fetch_mlp_product(codif)
-        if info:
-            de_results[codif] = info
+        if not info:
+            continue
+        if not is_disney_mlp(info):
+            print(f"  🚫 {codif} ({info['site_name']}) — description non-Disney, ignoré")
+            continue
+        de_results[codif] = info
     return list(de_results.values())
+
+def is_disney_mlp(info):
+    """Filtre garde-fou : un codif MLP-only n'est gardé que si sa description
+    (panelLog : 'Le concept' + 'Le positionnement linéaire') mentionne un terme
+    Disney. Évite d'avoir à maintenir SKIP_CODIFS au fil du temps et autorise
+    des KEYWORDS plus larges sans risque."""
+    desc = (info.get("description") or "").lower()
+    if not desc:
+        return False
+    return any(m in desc for m in DISNEY_MARKERS)
 
 # ── MLP : page produit (utilisée pour l'enrichissement et le fallback) ────────
 # Sert pour deux cas :
@@ -286,6 +314,16 @@ def fetch_mlp_product(codif):
         # Numéro : extrait juste les chiffres + suffixe alpha (ex N°593H → 593H)
         num_raw = find("_num") or ""
         num_match = re.search(r"(\d+[A-Z]*)", num_raw)
+        # Description ("Le concept" + "Le positionnement linéaire") — utilisée
+        # comme garde-fou Disney pour les codifs MLP-only via is_disney_mlp.
+        desc_m = re.search(
+            r'id="ContentPlaceHolder1_ctl01_panelLog"[^>]*>(.*?)</div>\s*</div>\s*</div>',
+            text, re.DOTALL,
+        )
+        description = ""
+        if desc_m:
+            description = re.sub(r"<[^>]+>", " ", desc_m.group(1))
+            description = re.sub(r"\s+", " ", description).strip()
         return {
             "codif": codif,
             "site_name": find("_tit1") or "",
@@ -297,6 +335,7 @@ def fetch_mlp_product(codif):
             "url": r1.url,
             "slug": "",
             "expired_on": None,
+            "description": description,
         }
     except Exception as e:
         print(f"  ⚠️  Lookup MLP échoué pour codif {codif} : {e}")
