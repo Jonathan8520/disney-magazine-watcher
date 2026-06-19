@@ -11,13 +11,13 @@
   },
   "14068": {
     "name": "Les Trésors de Picsou",
-    "numero": "74H",
-    "date_mise_en_vente": "14/03/2026",
-    "date_retrait": "12/06/2026",
-    "prix": "7.99 €",
-    "url": "https://direct-editeurs.fr/magazine/14068_picsou-magazine-hs-les-tresors-de-picsou_74",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FTP+++74",
-    "detected_at": "2026-05-05T22:24:40.495660"
+    "numero": "75H",
+    "date_mise_en_vente": "19/06/2026",
+    "date_retrait": "17/09/2026",
+    "prix": "7,99 €",
+    "url": "https://direct-editeurs.fr/magazine/14068_picsou-magazine-hs-les-tresors-de-picsou_75",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FTP+++75",
+    "detected_at": "2026-06-19T13:47:47.595169"
   },
   "15930": {
     "name": "Picsou Magazine HS Collection Deluxe (vol. 2)",
@@ -51,13 +51,13 @@
   },
   "15528": {
     "name": "Mickey Junior",
-    "numero": "488",
-    "date_mise_en_vente": "23/04/2026",
-    "date_retrait": "18/06/2026",
-    "prix": "5.95 €",
-    "url": "https://direct-editeurs.fr/magazine/15528_mickey-junior_488",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FMJ++488",
-    "detected_at": "2026-05-05T22:25:05.675293"
+    "numero": "489",
+    "date_mise_en_vente": "19/06/2026",
+    "date_retrait": null,
+    "prix": null,
+    "url": "https://direct-editeurs.fr/magazine/15528_mickey-junior_489",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FMJ++489",
+    "detected_at": "2026-06-19T13:47:47.595169"
   },
   "11068": {
     "name": "Pochette Mickey Parade",
