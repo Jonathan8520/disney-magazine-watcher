@@ -156,6 +156,11 @@ def parse_block(block):
         "codif": codif_m.group(1),
         "numero": num_m.group(1) if num_m else None,
         "date_mise_en_vente": paru_m.group(1) if paru_m else None,
+        # DE n'expose pas la date de retrait — on la laisse à None et l'enrichissement
+        # MLP la complète si possible. Indispensable d'initialiser le champ ici :
+        # quand l'enrichissement est skip (numero MLP ≠ DE), la suite du code lit
+        # `info["date_retrait"]` direct et planterait avec un KeyError.
+        "date_retrait": None,
         "prix": re.sub(r"\s+", " ", prix_m.group(1)).strip() if prix_m else None,
         "expired_on": expired_m.group(1) if expired_m else None,
         "cover_url": cover_url,
