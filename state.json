@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3860-3861",
-    "date_mise_en_vente": "10/06/2026",
-    "date_retrait": "24/06/2026",
+    "numero": "3862-3863",
+    "date_mise_en_vente": "24/06/2026",
+    "date_retrait": "08/07/2026",
     "prix": "4,90 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3860",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3860-61",
-    "detected_at": "2026-06-10T07:14:49.137141"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3862-3863",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3862-63",
+    "detected_at": "2026-06-24T08:28:28.278662"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -241,13 +241,13 @@
   },
   "13159": {
     "name": "Picsou Magazine",
-    "numero": "594",
-    "date_mise_en_vente": "05/05/2026",
-    "date_retrait": "04/07/2026",
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_594",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++594",
-    "detected_at": "2026-05-05T22:51:11.356188"
+    "numero": "595",
+    "date_mise_en_vente": "24/06/2026",
+    "date_retrait": "23/08/2026",
+    "prix": "8,99 €",
+    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_595",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++595",
+    "detected_at": "2026-06-24T08:28:22.719390"
   },
   "15681": {
     "name": "Picsou Magazine HS Collection Deluxe",
