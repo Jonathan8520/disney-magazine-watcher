@@ -562,5 +562,15 @@
     "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=em3MoZreg3I%3d&par_num=8ZH%2fX3NJSZE%3d",
     "inducks_url": null,
     "detected_at": "2026-06-08T18:50:35.887600"
+  },
+  "12228": {
+    "name": "SUPER PICSOU GÉANT HS DOUBLE DUCK",
+    "numero": "1H",
+    "date_mise_en_vente": "26/06/2026",
+    "date_retrait": "29/09/2026",
+    "prix": "6,99 €",
+    "url": "https://direct-editeurs.fr/magazine/12228_super-picsou-geant-hs-double-duck_1",
+    "inducks_url": null,
+    "detected_at": "2026-06-26T08:48:44.513465"
   }
 }
