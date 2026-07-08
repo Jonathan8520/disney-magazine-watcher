@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3862-3863",
-    "date_mise_en_vente": "24/06/2026",
-    "date_retrait": "08/07/2026",
+    "numero": "3864-3865",
+    "date_mise_en_vente": "08/07/2026",
+    "date_retrait": "22/07/2026",
     "prix": "4,90 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3862-3863",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3862-63",
-    "detected_at": "2026-06-24T08:28:28.278662"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3864-3865",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3864-65",
+    "detected_at": "2026-07-08T07:34:38.393844"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -71,13 +71,13 @@
   },
   "16096": {
     "name": "Journal de Mickey + Produit",
-    "numero": "3850H",
-    "date_mise_en_vente": "01/04/2026",
-    "date_retrait": "27/05/2026",
-    "prix": "6.9 €",
-    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3850",
+    "numero": "3864H",
+    "date_mise_en_vente": "08/07/2026",
+    "date_retrait": "06/09/2026",
+    "prix": "8,90 €",
+    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3864",
     "inducks_url": null,
-    "detected_at": "2026-05-05T22:25:15.641737"
+    "detected_at": "2026-07-08T07:34:43.925741"
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
@@ -586,12 +586,22 @@
   },
   "11071": {
     "name": "LE JOURNAL DE MICKEY HS COLLECTOR FANTASY REV",
-    "numero": "1H",
-    "date_mise_en_vente": "01/07/2026",
-    "date_retrait": "04/10/2026",
+    "numero": "2H",
+    "date_mise_en_vente": "08/07/2026",
+    "date_retrait": "11/10/2026",
     "prix": "6,95 €",
-    "url": "https://direct-editeurs.fr/magazine/11071_le-journal-de-mickey-hs-collector-fantasy-rev_1",
+    "url": "https://direct-editeurs.fr/magazine/11071_le-journal-de-mickey-hs-collector-fantasy-rev_2",
     "inducks_url": null,
-    "detected_at": "2026-07-01T10:02:07.674162"
+    "detected_at": "2026-07-08T07:34:49.732267"
+  },
+  "12011": {
+    "name": "JDM HS BD COLLECTOR",
+    "numero": "1H",
+    "date_mise_en_vente": "08/07/2026",
+    "date_retrait": "11/10/2026",
+    "prix": "6,95 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=na39X%2b8rHxU%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-07-08T07:34:50.928174"
   }
 }
