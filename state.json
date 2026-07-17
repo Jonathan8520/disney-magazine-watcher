@@ -51,13 +51,13 @@
   },
   "15528": {
     "name": "Mickey Junior",
-    "numero": "489",
-    "date_mise_en_vente": "19/06/2026",
+    "numero": "491",
+    "date_mise_en_vente": "17/07/2026",
     "date_retrait": null,
-    "prix": null,
-    "url": "https://direct-editeurs.fr/magazine/15528_mickey-junior_489",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FMJ++489",
-    "detected_at": "2026-06-19T13:47:47.595169"
+    "prix": "5.95 €",
+    "url": "https://direct-editeurs.fr/magazine/15528_mickey-junior_491",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FMJ++491",
+    "detected_at": "2026-07-17T10:05:12.056407"
   },
   "11068": {
     "name": "Pochette Mickey Parade",
