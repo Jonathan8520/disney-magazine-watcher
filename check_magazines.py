@@ -13,15 +13,30 @@ from zoneinfo import ZoneInfo
 # ensuite par codif.
 # MLP fait du match littéral : "super picsou geant" ne matche pas, mais "spg"
 # (l'abbréviation utilisée dans les titres MLP) trouve les SPG HS. Pareil pour
-# "jdm" qui ramène les HS Meilleur du JdM. Les abbréviations larges (mp, tp, li)
-# rapportent surtout du non-Disney mais le filtre description (DISNEY_MARKERS)
-# les écrémera automatiquement, donc on peut les ajouter sans risque si besoin.
-KEYWORDS = ["picsou", "mickey", "mickey hs", "mickey parade", "fantomiald",
-            "donald", "spg", "jdm"]
+# "jdm" qui ramène les HS Meilleur du JdM.
+#
+# ⚠️ MLP tronque ses libellés à 30 caractères, ce qui ampute la dernière lettre
+# des titres longs : "LE MEILLEUR DES TRÉSORS DE PICSOU" y est stocké
+# "MEILLEURS DES TRESORS DE PICSO" — donc "picsou" ne le trouve PAS. Comme DE et
+# MLP font tous deux du match "contains", on ajoute les variantes amputées d'un
+# caractère : "picso" ramène PICSOU *et* PICSO (vérifié : sur DE, "picso" renvoie
+# exactement les mêmes titres que "picsou").
+#
+# Les variantes qui paraissent redondantes ("mickey hs" vs "mickey") ne le sont
+# pas : chaque source ne renvoie qu'une fenêtre de résultats (8 chez MLP, 24 chez
+# DE), donc un mot-clé plus précis fait remonter des titres qu'un mot-clé large
+# pousse hors fenêtre.
+#
+# Les mots-clés génériques ("tresors", "meilleur") ramènent surtout du non-Disney
+# (Trésors de J'aime Lire, Meilleur du Point de Croix…) : ce sont les garde-fous
+# has_disney_marker() / is_disney_mlp() qui les écrèment, sur les deux flux.
+KEYWORDS = ["picsou", "picso", "mickey", "micke", "mickey hs", "mickey parade",
+            "fantomiald", "fantomial", "donald", "donal", "spg", "jdm",
+            "tresors", "meilleur"]
 
-# Marqueurs Disney recherchés dans la description (panelLog) MLP pour valider
-# qu'un codif MLP-only est bien Disney avant de le notifier. Permet d'élargir
-# les KEYWORDS sans craindre de polluer le state avec du non-Disney.
+# Marqueurs Disney recherchés dans le titre et dans la description (panelLog) MLP
+# pour valider qu'un codif inconnu est bien Disney avant de le notifier. Permet
+# d'élargir les KEYWORDS sans craindre de polluer le state avec du non-Disney.
 DISNEY_MARKERS = (
     "disney", "picsou", "donald", "mickey", "fantomiald", "castor junior",
     "trésors de picsou", "tresors de picsou",
@@ -32,6 +47,12 @@ DISNEY_MARKERS = (
 SKIP_CODIFS = {
     "11560",  # ANIME CULT (classé à tort en sous-famille Disney D23)
 }
+
+# Clé du cache négatif dans state.json : codifs écartés par le garde-fou Disney.
+# Évite de refaire une requête MLP par codif non-Disney à chaque run (les
+# mots-clés génériques en ramènent une vingtaine). Préfixée `_` pour ne pas
+# entrer en collision avec les codifs (numériques) ni les clés `glenat:`.
+NOT_DISNEY_KEY = "_not_disney"
 
 # Codifs qui paraissent systématiquement par lots de deux numéros (bi-issue).
 # Quand DE/MLP ne publient que la forme simple N (oubli éditeur), on synthétise
@@ -67,6 +88,7 @@ OVERRIDES = {
     "13459": {"name": "SPG HS Jeux",                           "emoji": "🎲", "inducks": ("SPGHS", 3, "J")},
     # ── Trésors de Picsou ────────────────────────────────────────────────────
     "14068": {"name": "Les Trésors de Picsou",                 "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
+    "15350": {"name": "Le Meilleur des Trésors de Picsou",     "emoji": "🏆", "color": 0x1E90FF},
     # ── Journal de Mickey et déclinaisons ────────────────────────────────────
     "14067": {"name": "Journal de Mickey",                     "emoji": "🐭", "color": 0xFF0000, "inducks": ("JM", 8)},
     "14108": {"name": "Journal de Mickey HS",                  "emoji": "⭐", "color": 0xCC0000, "inducks": ("JMHSN", 3)},
@@ -223,18 +245,43 @@ def discover_de():
                 info["numero"] = f"{n}-{n + 1}"
     return picked
 
-def discover():
+def discover(state=None):
     """Découverte hybride : Direct Éditeurs (riche, structuré) + MLP en complément
     pour les magazines que DE n'indexe pas (ex: Picsou Soir, Destin de Picsou).
-    Les codifs uniquement présents sur MLP sont enrichis via fetch_mlp_product."""
+    Les codifs uniquement présents sur MLP sont enrichis via fetch_mlp_product.
+
+    `state` sert de mémoire : les codifs déjà connus (déjà notifiés) échappent au
+    garde-fou Disney, et les codifs écartés y sont mémorisés (cache négatif)."""
+    state = {} if state is None else state
     de_results = discover_de()
     mlp_codifs = discover_mlp()
     for fam in MLP_FAMILIES:
         mlp_codifs |= discover_mlp_family(fam)
-    # Retire les codifs explicitement blacklistés (DE comme MLP).
-    for codif in SKIP_CODIFS:
+    # Retire les codifs blacklistés (liste manuelle + cache négatif), DE comme MLP.
+    skip = SKIP_CODIFS | set(state.get(NOT_DISNEY_KEY, {}))
+    for codif in skip:
         de_results.pop(codif, None)
-    mlp_codifs -= SKIP_CODIFS
+    mlp_codifs -= skip
+
+    # Codifs de confiance : override manuel ou déjà présents dans le state (donc
+    # déjà validés/notifiés par le passé). Jamais re-filtrés — indispensable pour
+    # les titres Disney dont le libellé ne le dit pas ("LES INCONTOURNABLES REV").
+    known = set(OVERRIDES) | {k for k in state if k.isdigit()}
+
+    # Garde-fou Disney sur le flux DE. Les mots-clés génériques ("tresors",
+    # "meilleur") y ramènent du non-Disney, et contrairement au flux MLP ce flux
+    # n'était jusqu'ici filtré par rien. Titre d'abord (gratuit), description MLP
+    # seulement en second recours (2 requêtes).
+    for codif, info in list(de_results.items()):
+        if codif in known or has_disney_marker(info.get("site_name")):
+            continue
+        mlp_info = fetch_mlp_product(codif)
+        if mlp_info and is_disney_mlp(mlp_info):
+            continue
+        print(f"  🚫 {codif} ({info.get('site_name')}) — non-Disney, ignoré (DE)")
+        forget_codif(state, codif, info.get("site_name"))
+        de_results.pop(codif)
+
     extras = mlp_codifs - de_results.keys()
     if extras:
         print(f"   ⤷ {len(extras)} magazines MLP-only à enrichir : {', '.join(sorted(extras))}")
@@ -242,21 +289,34 @@ def discover():
         info = fetch_mlp_product(codif)
         if not info:
             continue
-        if not is_disney_mlp(info):
+        if codif not in known and not is_disney_mlp(info):
             print(f"  🚫 {codif} ({info['site_name']}) — description non-Disney, ignoré")
+            forget_codif(state, codif, info.get("site_name"))
             continue
         de_results[codif] = info
     return list(de_results.values())
 
+def has_disney_marker(text):
+    """Cherche un marqueur Disney dans un texte (titre ou description) en tolérant
+    la troncature MLP à 30 caractères : on teste chaque marqueur amputé de sa
+    dernière lettre ("picsou" → "picso"), forme qui matche aussi bien le libellé
+    complet que le libellé coupé."""
+    t = (text or "").lower()
+    return any(m[:-1] in t for m in DISNEY_MARKERS)
+
 def is_disney_mlp(info):
-    """Filtre garde-fou : un codif MLP-only n'est gardé que si sa description
-    (panelLog : 'Le concept' + 'Le positionnement linéaire') mentionne un terme
-    Disney. Évite d'avoir à maintenir SKIP_CODIFS au fil du temps et autorise
-    des KEYWORDS plus larges sans risque."""
-    desc = (info.get("description") or "").lower()
-    if not desc:
-        return False
-    return any(m in desc for m in DISNEY_MARKERS)
+    """Filtre garde-fou : un codif inconnu n'est gardé que si son titre ou sa
+    description MLP (panelLog : 'Le concept' + 'Le positionnement linéaire')
+    mentionne un terme Disney. Évite d'avoir à maintenir SKIP_CODIFS au fil du
+    temps et autorise des KEYWORDS plus larges sans risque."""
+    return has_disney_marker(info.get("site_name")) or has_disney_marker(info.get("description"))
+
+def forget_codif(state, codif, label):
+    """Mémorise un codif écarté par le garde-fou Disney pour ne plus le
+    re-vérifier aux runs suivants (une vingtaine de requêtes MLP économisées par
+    run). OVERRIDES et les codifs déjà dans le state étant testés avant, ajouter
+    un override suffit à réhabiliter un titre écarté à tort."""
+    state.setdefault(NOT_DISNEY_KEY, {})[codif] = label or ""
 
 # ── MLP : page produit (utilisée pour l'enrichissement et le fallback) ────────
 # Sert pour deux cas :
@@ -384,14 +444,18 @@ def discover_mlp():
         return set()
 
 # ── State ─────────────────────────────────────────────────────────────────────
+# encoding="utf-8" explicite : sans lui Python suit la locale de la plateforme
+# (cp1252 sous Windows), ce qui écrit un state.json illisible dès qu'un titre
+# contient un accent. Le CI tourne sous Linux (UTF-8 par défaut) mais un run
+# local en produisait un fichier corrompu.
 def load_state():
     if os.path.exists(STATE_FILE):
-        with open(STATE_FILE) as f:
+        with open(STATE_FILE, encoding="utf-8") as f:
             return json.load(f)
     return {}
 
 def save_state(state):
-    with open(STATE_FILE, "w") as f:
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 # ── Discord ───────────────────────────────────────────────────────────────────
@@ -443,7 +507,13 @@ def build_inducks_url(inducks, numero):
     return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{code}{issue_padded}")
 
 def send_discord(name, emoji, color, info, inducks_code=None):
-    title_tail = info["site_name"] or name
+    # Les libellés MLP sont en majuscules et tronqués à 30 caractères
+    # ("MEILLEURS DES TRESORS DE PICSO") : quand la source est MLP on préfère le
+    # nom d'affichage (override si défini, sinon le libellé brut en repli).
+    if "mlp.fr" in info["url"]:
+        title_tail = name or info["site_name"]
+    else:
+        title_tail = info["site_name"] or name
     full_title = f"{title_tail} N°{info['numero']}" if info["numero"] else title_tail
     source = "catalogueproduits.mlp.fr" if "mlp.fr" in info["url"] else "direct-editeurs.fr"
     inducks_url = build_inducks_url(inducks_code, info["numero"])
@@ -709,7 +779,11 @@ def main():
     updated = False
 
     print("🔎 Découverte des magazines Disney (Direct Éditeurs + MLP)…")
-    magazines = discover()
+    skipped_before = len(state.get(NOT_DISNEY_KEY, {}))
+    magazines = discover(state)
+    # discover() peut avoir enrichi le cache négatif : il faut le persister.
+    if len(state.get(NOT_DISNEY_KEY, {})) != skipped_before:
+        updated = True
     print(f"   {len(magazines)} magazines trouvés\n")
 
     for info in magazines:
