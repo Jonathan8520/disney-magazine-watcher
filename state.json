@@ -634,5 +634,41 @@
     "announced_at": "2026-08-03T07:35:15.290161",
     "released_at": null,
     "detected_at": "2026-08-03T07:35:15.290161"
+  },
+  "_not_disney": {
+    "19720": "TRESORS DE LA LECTURE (LES)",
+    "19149": "TRESORS D AUTREFOIS",
+    "19320": "TRESORS DE LA LANGUE FRANCAISE",
+    "13119": "TRESORS DE LA LITTERATURE+1MAG",
+    "18890": "TRESORS DE LA LITTERATURE (LES",
+    "16320": "TRESORS D AUTREFOIS HS",
+    "15833": "LES TRÉSORS DE LA LITTÉRATURE LES ESSENTIELS HS",
+    "01548": "LES TRÉSORS DE J'AIME LIRE",
+    "02506": "LES TRÉSORS DE MES PREMIÈRES BELLES HISTOIRES HS",
+    "05033": "LES TRÉSORS DE JE BOUQUINE",
+    "01183": "LES TRÉSORS DE J'AIME LIRE MAX",
+    "01685": "POPI HS LES TRÉSORS DE POPI",
+    "13651": "LES TRÉSORS DE LA LANGUE FRANÇAISE HS",
+    "14892": "LES TRESORS DE LA CULTURE",
+    "18667": "LES TRÉSORS DE LA LITTÉRATURE LES ESSENTIELS",
+    "12173": "TRESORS DE LA CULTURE(LES) PP",
+    "05332": "LES TRÉSORS DE POMME D'API HS",
+    "19314": "MEILLEUR DE LA LANGUE FRANCAIS",
+    "18183": "MEILLEUR LANGUE FRANCAISE HS",
+    "18023": "ROCK NOS MEILLEURS SOUVENIRS",
+    "16158": "MEILLEURS DU POINT DE CROIX",
+    "03537": "LE FIGARO JEUX - LES MEILLEURS JEUX DU FIGARO",
+    "15248": "C EST MEILLEUR QUAND C EST BON",
+    "17756": "MEILLEUR DU ROCK (LE)"
+  },
+  "15350": {
+    "name": "Le Meilleur des Trésors de Picsou",
+    "numero": "1H",
+    "date_mise_en_vente": "01/08/2026",
+    "date_retrait": "28/01/2027",
+    "prix": "7,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=ZG4m5ipy1Kk%3d&par_num=Y8rsBoIKnD8%3d",
+    "inducks_url": null,
+    "detected_at": "2026-08-04T11:02:03.839399"
   }
 }
