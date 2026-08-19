@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3868-3869",
-    "date_mise_en_vente": "05/08/2026",
+    "numero": "3870-3871",
+    "date_mise_en_vente": "19/08/2026",
     "date_retrait": null,
     "prix": "4.9 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3868",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3868-69",
-    "detected_at": "2026-08-05T05:52:07.363684"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3870",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3870-71",
+    "detected_at": "2026-08-19T05:36:43.669644"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -319,11 +319,13 @@
   },
   "glenat:9782344075203": {
     "title": "Les Âges d'or de Mickey - Tome 03",
-    "date_parution": "05/08/2026",
+    "date_parution": "19/08/2026",
     "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-mickey-tome-03-9782344075203/",
     "announced_at": "2026-06-04T08:56:10.220108",
-    "released_at": null,
-    "seeded": true
+    "released_at": "2026-08-19T05:36:44.879859",
+    "seeded": true,
+    "prix": "19.00",
+    "cover_url": "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/2026/9782344075203-001-X.jpeg?source=web&v=33e67ae902e2ed4f295b3077e88dbc11"
   },
   "glenat:9782344075128": {
     "title": "La Grande Histoire de Picsou - Tome 03",
