@@ -42,10 +42,19 @@ DISNEY_MARKERS = (
     "trésors de picsou", "tresors de picsou",
 )
 
-# Codifs à exclure explicitement (magazines mal catégorisés sur MLP qui matchent
-# nos sources de découverte sans être réellement Disney).
+# Codifs à exclure explicitement de la découverte, pour deux raisons distinctes :
+#   • magazines mal catégorisés sur MLP qui matchent nos mots-clés sans être Disney ;
+#   • titres Disney qu'on ne souhaite tout simplement pas suivre.
+# Le skip est appliqué en amont de tout traitement, sur les deux flux (DE et MLP) :
+# un codif listé ici n'est ni notifié, ni enrichi, ni mis à jour dans le state.
 SKIP_CODIFS = {
     "11560",  # ANIME CULT (classé à tort en sous-famille Disney D23)
+    # ── Ligne Mickey Junior : hors périmètre, désactivée volontairement. ──────
+    # Les OVERRIDES correspondants sont conservés : retirer les trois lignes
+    # ci-dessous suffit à tout réactiver, avec emoji et code Inducks intacts.
+    "15528",  # Mickey Junior
+    "14513",  # Mickey Junior HS Jeux
+    "18875",  # Mickey Junior HS Baby
 }
 
 # Clé du cache négatif dans state.json : codifs écartés par le garde-fou Disney.
@@ -98,6 +107,8 @@ OVERRIDES = {
     "15970": {"name": "Le Meilleur du JdM HS",                 "emoji": "🏆"},
     "18914": {"name": "Le Meilleur du JdM HS Spécial Enquêtes","emoji": "🔍"},
     # ── Mickey Junior ────────────────────────────────────────────────────────
+    # ⚠️ Les trois codifs ci-dessous sont désactivés via SKIP_CODIFS ; on garde
+    # leurs métadonnées ici pour pouvoir les réactiver sans rien réécrire.
     "15528": {"name": "Mickey Junior",                         "emoji": "🧒", "color": 0xFFA500, "inducks": "MJ"},
     "14513": {"name": "Mickey Junior HS Jeux",                 "emoji": "🎲"},
     "18875": {"name": "Mickey Junior HS Baby",                 "emoji": "🍼"},
