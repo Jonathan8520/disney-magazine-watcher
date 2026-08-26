@@ -567,13 +567,13 @@
   },
   "12228": {
     "name": "SUPER PICSOU GÉANT HS DOUBLE DUCK",
-    "numero": "1H",
-    "date_mise_en_vente": "26/06/2026",
-    "date_retrait": "29/09/2026",
-    "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/12228_super-picsou-geant-hs-double-duck_1",
+    "numero": "2H",
+    "date_mise_en_vente": "26/08/2026",
+    "date_retrait": null,
+    "prix": "6.99 €",
+    "url": "https://direct-editeurs.fr/magazine/12228_super-picsou-geant-hs-double-duck_2",
     "inducks_url": null,
-    "detected_at": "2026-06-26T08:48:44.513465"
+    "detected_at": "2026-08-26T05:40:23.013709"
   },
   "glenat:9782344075197": {
     "title": "Les Âges d'or de Donald - Tome 03",
