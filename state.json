@@ -674,5 +674,16 @@
     "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=ZG4m5ipy1Kk%3d&par_num=Y8rsBoIKnD8%3d",
     "inducks_url": null,
     "detected_at": "2026-08-04T11:02:03.839399"
+  },
+  "glenat:9782344078440": {
+    "title": "What If",
+    "serie": null,
+    "date_parution": "02/12/2026",
+    "prix": "19.00",
+    "url": "https://www.glenat.com/glenat-disney/what-if-9782344078440/",
+    "cover_url": null,
+    "announced_at": "2026-09-01T07:37:38.433560",
+    "released_at": null,
+    "detected_at": "2026-09-01T07:37:38.433560"
   }
 }
