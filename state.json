@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3870-3871",
-    "date_mise_en_vente": "19/08/2026",
-    "date_retrait": null,
-    "prix": "4.9 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3870",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3870-71",
-    "detected_at": "2026-08-19T05:36:43.669644"
+    "numero": "3872-3873",
+    "date_mise_en_vente": "02/09/2026",
+    "date_retrait": "16/09/2026",
+    "prix": "4,90 €",
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3872-3873",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3872-73",
+    "detected_at": "2026-09-02T08:43:26.301212"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -71,13 +71,13 @@
   },
   "16096": {
     "name": "Journal de Mickey + Produit",
-    "numero": "3864H",
-    "date_mise_en_vente": "08/07/2026",
-    "date_retrait": "06/09/2026",
-    "prix": "8,90 €",
-    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3864",
+    "numero": "3872H",
+    "date_mise_en_vente": "02/09/2026",
+    "date_retrait": "01/11/2026",
+    "prix": "6,90 €",
+    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872",
     "inducks_url": null,
-    "detected_at": "2026-07-08T07:34:43.925741"
+    "detected_at": "2026-09-02T08:43:32.466092"
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
@@ -201,23 +201,23 @@
   },
   "19064": {
     "name": "Les Incontournables (REV)",
-    "numero": "4H",
-    "date_mise_en_vente": "03/06/2026",
-    "date_retrait": "02/09/2026",
-    "prix": "10,99 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=CIwncIgFg%2fE%3d&par_num=PUgu2bwXqc0%3d",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FLI+++4",
-    "detected_at": "2026-06-03T09:59:25.402119"
+    "numero": "5H",
+    "date_mise_en_vente": "02/09/2026",
+    "date_retrait": "02/12/2026",
+    "prix": "7,99 €",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=CIwncIgFg%2fE%3d&par_num=m6DHeNvi3BE%3d",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FLI+++5",
+    "detected_at": "2026-09-02T08:43:46.356027"
   },
   "18262": {
     "name": "SPG HS Super Donald Géant (REV)",
-    "numero": "4H",
-    "date_mise_en_vente": "14/03/2026",
-    "date_retrait": "12/06/2026",
+    "numero": "5H",
+    "date_mise_en_vente": "02/09/2026",
+    "date_retrait": "06/12/2026",
     "prix": "8,50 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=MngFmwxMLuA%3d&par_num=PUgu2bwXqc0%3d",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+D4",
-    "detected_at": "2026-05-05T22:26:02.592139"
+    "url": "https://direct-editeurs.fr/magazine/18262_super-donald-geant-hs-rev_5",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+D5",
+    "detected_at": "2026-09-02T08:43:45.001783"
   },
   "14016": {
     "name": "Super Picsou Géant",
@@ -536,14 +536,14 @@
     "detected_at": "2026-06-08T18:50:34.886786"
   },
   "18279": {
-    "name": "POCH. GRIMOIRE MEIL JDM HS REV",
-    "numero": "4H",
-    "date_mise_en_vente": "28/11/2025",
-    "date_retrait": "26/02/2026",
-    "prix": "9,90 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=5PvoEAhVigA%3d&par_num=PUgu2bwXqc0%3d",
+    "name": "POCHETTE GRIMOIRE MEILLEUR JOURNAL DE MICKEY HS REV",
+    "numero": "6H",
+    "date_mise_en_vente": "02/09/2026",
+    "date_retrait": "06/12/2026",
+    "prix": "6,95 €",
+    "url": "https://direct-editeurs.fr/magazine/18279_pochette-grimoire-meilleur-journal-de-mickey-hs-rev_6",
     "inducks_url": null,
-    "detected_at": "2026-06-08T18:50:35.887001"
+    "detected_at": "2026-09-02T08:43:39.156336"
   },
   "18288": {
     "name": "Picsou HS Castors Juniors",
