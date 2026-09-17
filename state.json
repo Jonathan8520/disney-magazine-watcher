@@ -685,5 +685,15 @@
     "announced_at": "2026-09-01T07:37:38.433560",
     "released_at": null,
     "detected_at": "2026-09-01T07:37:38.433560"
+  },
+  "15420": {
+    "name": "PICSOU HS LA NOUVELLE JEUNESSE DE PICSOU",
+    "numero": "1H",
+    "date_mise_en_vente": "17/09/2026",
+    "date_retrait": "21/12/2026",
+    "prix": "12,95 €",
+    "url": "https://direct-editeurs.fr/magazine/15420_picsou-hs-la-nouvelle-jeunesse-de-picsou_1",
+    "inducks_url": null,
+    "detected_at": "2026-09-17T11:27:03.852275"
   }
 }
