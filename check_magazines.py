@@ -612,8 +612,13 @@ def send_discord(name, emoji, color, info, inducks_code=None):
     # REV (Remis En Vente) et pochettes = ré-éditions/lots, pas une vraie nouveauté.
     is_rev = bool(re.search(r"\b(REV|POCH(?:ETTE)?)\b", name, re.IGNORECASE))
     headline = "🔁 **Remis en vente !**" if is_rev else "🆕 **Nouveau numéro disponible !**"
+    # L'en-tête dit déjà « Remis en vente » : on retire le « REV » / « (REV) »
+    # du nom pour ne pas le répéter (\b évite de toucher « REVUE »).
+    shown = name
+    if is_rev:
+        shown = re.sub(r"\s*\(\s*REV\s*\)|\s*\bREV\b", "", name, flags=re.IGNORECASE).strip(" -–—") or name
     payload = {
-        "content": f"{headline} — {name}",
+        "content": f"{headline} — {shown}",
         "embeds": [embed],
     }
     _post_discord(payload)
