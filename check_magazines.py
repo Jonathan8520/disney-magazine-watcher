@@ -82,11 +82,12 @@ OVERRIDES = {
     "15681": {"name": "Picsou Magazine HS Collection Deluxe",  "emoji": "📘", "inducks": ("CD", 5)},
     "15930": {"name": "Picsou Magazine HS Collection Deluxe (vol. 2)", "emoji": "📘", "inducks": ("CD", 5)},
     "18288": {"name": "Picsou HS Castors Juniors",             "emoji": "🦫", "inducks": ("PMHS", 3, "S")},
-    "19603": {"name": "Picsou HS Souvenirs du Klondike",       "emoji": "⛏️"},
+    "19603": {"name": "Picsou HS Souvenirs du Klondike",       "emoji": "⛏️", "inducks": {"1": "PMHSCDJ2"}},
     "17575": {"name": "Picsou Anniversaire en or",             "emoji": "🎂"},
-    "18658": {"name": "Picsou Soir",                           "emoji": "🌆"},
-    "18360": {"name": "Nouvelle Jeunesse de Picsou",           "emoji": "🌱"},
-    "19607": {"name": "Le Destin de Picsou",                   "emoji": "⏳"},
+    "18658": {"name": "Picsou Soir",                           "emoji": "🌆", "inducks": ("SPGHS", 3, "PS")},
+    "18360": {"name": "Nouvelle Jeunesse de Picsou",           "emoji": "🌱", "inducks": {"1": "PMHSCDJ1"}},
+    "15420": {"name": "Nouvelle Jeunesse de Picsou",           "emoji": "🌱", "inducks": {"1": "PMHSCDJ1"}},
+    "19607": {"name": "Le Destin de Picsou",                   "emoji": "⏳", "inducks": {"1": "PMHSCDJ3"}},
     "19052": {"name": "Pochette Picsou Magazine",              "emoji": "📦"},
     # ── Super Picsou Géant et déclinaisons ───────────────────────────────────
     "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": ("SPG", 4)},
@@ -96,17 +97,28 @@ OVERRIDES = {
     "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
     "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹", "inducks": ("DON", 4)},
     "13459": {"name": "SPG HS Jeux",                           "emoji": "🎲", "inducks": ("SPGHS", 3, "J")},
+    "11065": {"name": "SPG HS Les Grands Méchants",            "emoji": "😈", "inducks": ("SPGHS", 3, "M")},
+    "17867": {"name": "SPG HS Des souvenirs par millions (REV)", "emoji": "📸", "inducks": ("SPGHS", 3, "P")},
     # ── Trésors de Picsou ────────────────────────────────────────────────────
     "14068": {"name": "Les Trésors de Picsou",                 "emoji": "💎", "color": 0x1E90FF, "inducks": "TP"},
-    "15350": {"name": "Le Meilleur des Trésors de Picsou",     "emoji": "🏆", "color": 0x1E90FF},
+    "15350": {"name": "Le Meilleur des Trésors de Picsou",     "emoji": "🏆", "color": 0x1E90FF, "inducks": ("LMT", 4)},
     # ── Journal de Mickey et déclinaisons ────────────────────────────────────
     "14067": {"name": "Journal de Mickey",                     "emoji": "🐭", "color": 0xFF0000, "inducks": ("JM", 8)},
     "14108": {"name": "Journal de Mickey HS",                  "emoji": "⭐", "color": 0xCC0000, "inducks": ("JMHSN", 3)},
     "13588": {"name": "JdM HS Spécial Aventures (REV)",        "emoji": "🗺️"},
+    "12010": {"name": "Journal de Mickey HS 100% BD",          "emoji": "📖", "inducks": ("JMHS100BD", 2)},
+    "17563": {"name": "JdM HS Collection Mythologie",          "emoji": "🏛️", "inducks": ("JMHSCM", 2)},
+    "11047": {"name": "JdM HS Collection Mythologie (REV)",    "emoji": "🏛️", "inducks": ("JMHSCM", 2)},
+    "11071": {"name": "JdM HS Collector Fantasy (REV)",        "emoji": "🐉", "inducks": ("JMHSCF", 2)},
+    # Pas de lien Inducks : MLP publie un numéro simple (3872H) alors qu'Inducks
+    # range le JdM en bi-numéros (fr/JM 3872-73) → le lien serait faux.
     "16096": {"name": "Journal de Mickey + Produit",           "emoji": "🎁"},
-    "15935": {"name": "Le Meilleur du Journal de Mickey",      "emoji": "🏆", "color": 0xDAA520},
+    # « Le Meilleur du Journal de Mickey » = « La Compil » chez Inducks (fr/JMC).
+    "15935": {"name": "Le Meilleur du Journal de Mickey",      "emoji": "🏆", "color": 0xDAA520, "inducks": ("JMC", 4)},
     "15970": {"name": "Le Meilleur du JdM HS",                 "emoji": "🏆"},
-    "18914": {"name": "Le Meilleur du JdM HS Spécial Enquêtes","emoji": "🔍"},
+    "18914": {"name": "Le Meilleur du JdM HS Spécial Enquêtes","emoji": "🔍", "inducks": ("LMJ", 5, "E")},
+    "11363": {"name": "Le Meilleur du JdM HS Noël",            "emoji": "🎄", "inducks": ("LMJ", 5, "N")},
+    "17112": {"name": "Le Meilleur du JdM HS Noël (REV)",      "emoji": "🎄", "inducks": ("LMJ", 5, "N")},
     # ── Mickey Junior ────────────────────────────────────────────────────────
     # ⚠️ Les trois codifs ci-dessous sont désactivés via SKIP_CODIFS ; on garde
     # leurs métadonnées ici pour pouvoir les réactiver sans rien réécrire.
@@ -531,9 +543,17 @@ def build_inducks_url(inducks, numero):
     `inducks` accepte :
       - str → (code, largeur 5, sans préfixe)        ex: 'PM'
       - (code, largeur)                              ex: ('JMHSN', 3)
-      - (code, largeur, préfixe)                     ex: ('SPGHS', 3, 'D')"""
+      - (code, largeur, préfixe)                     ex: ('SPGHS', 3, 'D')
+      - dict {numéro: code complet}                  ex: {'1': 'PMHSCDJ2'}
+        pour les one-shots dont la numérotation MLP (toujours 1) ne suit pas
+        celle d'Inducks : seul un numéro listé produit un lien."""
     if not inducks or not numero:
         return None
+    from urllib.parse import quote_plus
+    if isinstance(inducks, dict):
+        n = re.match(r"\d+", numero)
+        code = inducks.get(n.group(0)) if n else None
+        return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{code}") if code else None
     if isinstance(inducks, tuple):
         if len(inducks) == 3:
             code, pad, prefix = inducks
