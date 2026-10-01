@@ -5,6 +5,7 @@ import re
 import time
 import requests
 from datetime import datetime
+from urllib.parse import urlsplit, urlunsplit
 from zoneinfo import ZoneInfo
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -151,6 +152,14 @@ MLP_FAMILIES = ["D23"]
 GLENAT_COLLECTION_URL = "https://www.glenat.com/livres-glenat-disney/"
 GLENAT_BASE = "https://www.glenat.com"
 GLENAT_KEY_PREFIX = "glenat:"
+# CDN Hachette qui héberge les couvertures Glénat. La fiche d'un album « à
+# paraître » affiche souvent le placeholder « Couverture de produit indisponible »
+# (cover.src = null dans __NEXT_DATA__) alors que l'image est DÉJÀ en ligne sur
+# le CDN : on la sonde directement. Le dossier {year} est l'année de création de
+# la fiche chez Hachette, pas forcément l'année de parution (ex : un album prévu
+# en janvier 2027 est rangé dans /2026/). Un EAN absent renvoie 404 en JSON.
+GLENAT_CDN_ORIGINAL = "https://media.hachette.fr/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
+GLENAT_CDN_COVER = "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
 
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
@@ -470,19 +479,38 @@ def save_state(state):
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 # ── Discord ───────────────────────────────────────────────────────────────────
-def _post_discord(payload):
-    """POST le payload au webhook en gérant le rate limit Discord (~5 req/s) :
+def _discord_request(method, url, payload, params=None):
+    """Envoie au webhook en gérant le rate limit Discord (~5 req/s) :
     retry jusqu'à 4 fois en respectant l'en-tête Retry-After."""
     for _ in range(4):
-        r = requests.post(DISCORD_WEBHOOK, json=payload, timeout=10)
+        r = requests.request(method, url, json=payload, params=params, timeout=10)
         if r.status_code == 429:
             retry_after = float(r.json().get("retry_after", 1))
             print(f"  ⏳ Rate limit Discord, attente {retry_after:.1f}s")
             time.sleep(retry_after + 0.3)
             continue
         r.raise_for_status()
-        return
+        return r
     raise RuntimeError("Discord rate limit non résolu après plusieurs tentatives")
+
+def _post_discord(payload, wait=False):
+    """POST le payload au webhook. Avec wait=True, Discord renvoie le message
+    créé : on retourne son id (pour pouvoir l'éditer plus tard)."""
+    r = _discord_request("POST", DISCORD_WEBHOOK, payload,
+                         params={"wait": "true"} if wait else None)
+    if wait:
+        try:
+            return r.json().get("id")
+        except ValueError:
+            return None
+    return None
+
+def _edit_discord(message_id, payload):
+    """Remplace le contenu d'un message déjà posté par ce webhook (PATCH).
+    La query éventuelle du webhook (ex: ?thread_id=) est conservée."""
+    p = urlsplit(DISCORD_WEBHOOK)
+    url = urlunsplit((p.scheme, p.netloc, f"{p.path.rstrip('/')}/messages/{message_id}", p.query, ""))
+    _discord_request("PATCH", url, payload)
 
 def build_inducks_url(inducks, numero):
     """Construit l'URL Inducks pour un numéro. Format: 'fr/<CODE><ISSUE>' où
@@ -605,9 +633,34 @@ def discover_glenat():
         print(f"⚠️  discover_glenat échoué : {e}")
         return []
 
-def fetch_glenat_product(url):
+def probe_glenat_cover(ean, date_fr=None):
+    """Cherche la couverture d'un album directement sur le CDN Hachette, même
+    quand la fiche Glénat affiche encore le placeholder. Essaie l'année en cours
+    d'abord (cas le plus fréquent pour une annonce), puis l'année de parution et
+    les années voisines. Retourne l'URL 500x500 (format de la fiche) ou None."""
+    this_year = datetime.now().year
+    years = [this_year]
+    try:
+        parution_year = int((date_fr or "").split("/")[2])
+    except (IndexError, ValueError):
+        parution_year = None
+    for y in (parution_year, this_year - 1, this_year + 1):
+        if y and y not in years:
+            years.append(y)
+    for y in years:
+        try:
+            r = requests.head(GLENAT_CDN_ORIGINAL.format(year=y, ean=ean),
+                              headers=HEADERS, timeout=10, allow_redirects=True)
+        except requests.RequestException:
+            continue
+        if r.status_code == 200 and r.headers.get("content-type", "").startswith("image/"):
+            return GLENAT_CDN_COVER.format(year=y, ean=ean)
+    return None
+
+def fetch_glenat_product(url, date_fr=None):
     """Enrichit un album via sa fiche : cover HD, prix, série, collection, résumé.
-    Tout est dans le blob __NEXT_DATA__ (props.pageProps.data)."""
+    Tout est dans le blob __NEXT_DATA__ (props.pageProps.data). Si la fiche n'a
+    pas encore de couverture, on la cherche directement sur le CDN Hachette."""
     try:
         r = requests.get(url, headers=HEADERS, timeout=20)
         r.raise_for_status()
@@ -622,26 +675,38 @@ def fetch_glenat_product(url):
             r.text,
         )
         resume = re.sub(r"<[^>]+>", "", html.unescape(d.get("resume") or "")).strip()
+        if cov:
+            # html.unescape : l'URL brute contient &amp; (encodé HTML) → &
+            cover_url = html.unescape(cov.group(0))
+        else:
+            ean = ean or (re.search(r"(\d{13})/?$", url) or [None, None])[1]
+            cover_url = probe_glenat_cover(ean, date_fr) if ean else None
+            if cover_url:
+                print(f"  🖼️  Couverture absente de la fiche, trouvée sur le CDN : {cover_url}")
         return {
             "title": d.get("titre_de_couverture"),
             "serie": d.get("serie_label"),
             "collection": d.get("collection_label"),
             "prix": d.get("prix_ttc"),
             "resume": resume,
-            # html.unescape : l'URL brute contient &amp; (encodé HTML) → &
-            "cover_url": html.unescape(cov.group(0)) if cov else None,
+            "cover_url": cover_url,
         }
     except Exception as e:
         print(f"  ⚠️  Fiche Glénat échouée ({url}) : {e}")
         return {}
 
-def send_glenat_discord(item, enrich, kind):
-    """Notifie un album BD Disney Glénat. kind = 'announced' | 'released'."""
+def build_glenat_payload(item, enrich, kind):
+    """Payload Discord d'un album BD Disney Glénat.
+    kind = 'announced' | 'released' | 'cover' (couverture dévoilée après coup)."""
     title = enrich.get("title") or item["title"] or "BD Disney"
     if kind == "released":
         emoji, color = "📚", 0x009688
         headline = "📚 **BD Disney en librairie !**"
         date_label = "📅 En librairie le"
+    elif kind == "cover":
+        emoji, color = "🖼️", 0x8E24AA
+        headline = "🖼️ **Couverture dévoilée !**"
+        date_label = "🗓️ Parution prévue le"
     else:
         emoji, color = "📆", 0x3F51B5
         headline = "📢 **Nouvelle BD Disney annoncée !**"
@@ -657,7 +722,7 @@ def send_glenat_discord(item, enrich, kind):
     desc = []
     if enrich.get("serie"):
         desc.append(f"*Série : {enrich['serie']}*")
-    if enrich.get("resume"):
+    if enrich.get("resume") and kind != "cover":  # résumé déjà dans l'annonce
         txt = enrich["resume"]
         desc.append(txt[:300] + ("…" if len(txt) > 300 else ""))
     if desc:
@@ -670,8 +735,55 @@ def send_glenat_discord(item, enrich, kind):
         embed["fields"].append({"name": "📚 Collection", "value": enrich["collection"], "inline": True})
     if enrich.get("cover_url"):
         embed["image"] = {"url": enrich["cover_url"]}
-    _post_discord({"content": f"{headline} — {title}", "embeds": [embed]})
-    print(f"  ✅ Notif Glénat envoyée ({kind}) : {title}")
+    return {"content": f"{headline} — {title}", "embeds": [embed]}
+
+def send_glenat_discord(item, enrich, kind):
+    """Notifie un album BD Disney Glénat. Retourne l'id du message Discord."""
+    message_id = _post_discord(build_glenat_payload(item, enrich, kind), wait=True)
+    print(f"  ✅ Notif Glénat envoyée ({kind}) : {enrich.get('title') or item['title']}")
+    return message_id
+
+def reveal_glenat_covers(state):
+    """Albums annoncés (pas seed/backfill), pas encore sortis et notifiés sans
+    couverture : on sonde le CDN à chaque run. Dès que l'image apparaît, on
+    édite le message d'annonce (si son id est connu) pour y ajouter l'image,
+    sinon on poste une notif « Couverture dévoilée ». Retourne True si le state
+    a changé. Un échec Discord ne stocke rien : on réessaiera au run suivant."""
+    updated = False
+    for key, st in state.items():
+        if not key.startswith(GLENAT_KEY_PREFIX) or not isinstance(st, dict):
+            continue
+        if st.get("released_at") or st.get("cover_url") or st.get("seeded") or st.get("backfilled"):
+            continue
+        ean = key[len(GLENAT_KEY_PREFIX):]
+        if not probe_glenat_cover(ean, st.get("date_parution")):
+            continue
+        # La sonde a trouvé l'image : on recharge la fiche pour un embed complet.
+        enrich = fetch_glenat_product(st["url"], st.get("date_parution"))
+        if not enrich.get("cover_url"):
+            continue
+        item = {"url": st["url"], "title": st.get("title"), "date": st.get("date_parution")}
+        print(f"   🖼️  Couverture dévoilée : {st.get('title')} ({ean})")
+        done = False
+        if st.get("message_id"):
+            try:
+                _edit_discord(st["message_id"], build_glenat_payload(item, enrich, "announced"))
+                print("  ✏️  Message d'annonce mis à jour avec la couverture")
+                done = True
+            except Exception as e:
+                # Message supprimé (404) ou autre : on se rabat sur une notif.
+                print(f"  ⚠️  Édition impossible ({e}) — envoi d'une notif à la place")
+        if not done:
+            try:
+                send_glenat_discord(item, enrich, "cover")
+                done = True
+                time.sleep(1)
+            except Exception as e:
+                print(f"   ❌ Erreur Discord Glénat : {e}")
+        if done:
+            st["cover_url"] = enrich["cover_url"]
+            updated = True
+    return updated
 
 def check_glenat(state):
     """Surveille les BD Disney Glénat. Retourne True si le state a changé.
@@ -732,10 +844,11 @@ def check_glenat(state):
                 }
                 updated = True
                 continue
-            enrich = fetch_glenat_product(item["url"])
+            enrich = fetch_glenat_product(item["url"], item.get("date"))
             print(f"   🆕 {item['title']} ({item['ean']}) → {kind}")
+            message_id = None
             try:
-                send_glenat_discord(item, enrich, kind)
+                message_id = send_glenat_discord(item, enrich, kind)
                 sent = True
             except Exception as e:
                 print(f"   ❌ Erreur Discord Glénat : {e}")
@@ -750,6 +863,9 @@ def check_glenat(state):
                 "announced_at": now,
                 "released_at": now if kind == "released" else None,
                 "detected_at": now,
+                # Id du message d'annonce : permet d'y ajouter la couverture
+                # plus tard (édition) si elle n'était pas encore en ligne.
+                "message_id": message_id,
             }
             updated = True
             if sent:
@@ -758,7 +874,7 @@ def check_glenat(state):
 
         # ── Album connu : notif « sortie » quand la date est atteinte ────────
         if st.get("released_at") is None and is_out:
-            enrich = fetch_glenat_product(item["url"])
+            enrich = fetch_glenat_product(item["url"], item.get("date"))
             print(f"   📚 {item['title']} ({item['ean']}) → date atteinte (released)")
             try:
                 send_glenat_discord(item, enrich, "released")
@@ -772,6 +888,10 @@ def check_glenat(state):
                 st["cover_url"] = enrich["cover_url"]
             updated = True
             time.sleep(1)
+
+    # Couvertures arrivées après l'annonce (indépendant de la page 1).
+    if not seeding and reveal_glenat_covers(state):
+        updated = True
 
     return updated
 
