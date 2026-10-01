@@ -158,6 +158,17 @@ GLENAT_KEY_PREFIX = "glenat:"
 # le CDN : on la sonde directement. Le dossier {year} est l'année de création de
 # la fiche chez Hachette, pas forcément l'année de parution (ex : un album prévu
 # en janvier 2027 est rangé dans /2026/). Un EAN absent renvoie 404 en JSON.
+# Séries Glénat indexées sur Inducks : `serie_label` de la fiche Glénat →
+# code Inducks (même format que OVERRIDES, voir build_inducks_url). Le numéro
+# vient de `numero_de_tome`. Inducks indexe les albums quelques jours avant la
+# sortie, pas à l'annonce : le lien n'est donc ajouté qu'à la notif de sortie.
+# Vérifié : fr/AODM  1-3, fr/AODD  1-2, fr/AODP  1-2, fr/GHP   1-3.
+GLENAT_INDUCKS = {
+    "Les Âges d'or de Mickey": ("AODM", 3),
+    "Les Âges d'or de Picsou": ("AODP", 3),
+    "Les Âges d'or de Donald": ("AODD", 3),
+    "La Grande Histoire de Picsou par Don Rosa": ("GHP", 4),
+}
 GLENAT_CDN_ORIGINAL = "https://media.hachette.fr/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
 GLENAT_CDN_COVER = "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
 
@@ -689,6 +700,7 @@ def fetch_glenat_product(url, date_fr=None):
             "collection": d.get("collection_label"),
             "prix": d.get("prix_ttc"),
             "pages": d.get("page"),  # nombre de pages (provisoire avant parution)
+            "tome": d.get("numero_de_tome"),
             "resume": resume,
             "cover_url": cover_url,
         }
@@ -721,6 +733,14 @@ def build_glenat_payload(item, enrich, kind):
     if enrich.get("resume"):
         txt = enrich["resume"]
         desc.append(txt[:300] + ("…" if len(txt) > 300 else ""))
+    if kind == "released":
+        try:
+            tome = str(int(enrich.get("tome")))
+        except (TypeError, ValueError):
+            tome = None
+        inducks_url = build_inducks_url(GLENAT_INDUCKS.get(enrich.get("serie")), tome)
+        if inducks_url:
+            desc.append(f"[📋 Sommaire sur Inducks]({inducks_url})")
     if desc:
         embed["description"] = "\n".join(desc)
     if item.get("date"):
