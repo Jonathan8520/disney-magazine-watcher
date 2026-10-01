@@ -688,6 +688,7 @@ def fetch_glenat_product(url, date_fr=None):
             "serie": d.get("serie_label"),
             "collection": d.get("collection_label"),
             "prix": d.get("prix_ttc"),
+            "pages": d.get("page"),  # nombre de pages (provisoire avant parution)
             "resume": resume,
             "cover_url": cover_url,
         }
@@ -726,6 +727,12 @@ def build_glenat_payload(item, enrich, kind):
         embed["fields"].append({"name": date_label, "value": item["date"], "inline": True})
     if enrich.get("prix"):
         embed["fields"].append({"name": "💶 Prix", "value": f"{enrich['prix']} €", "inline": True})
+    try:
+        pages = int(enrich.get("pages") or 0)
+    except (TypeError, ValueError):
+        pages = 0
+    if pages > 0:
+        embed["fields"].append({"name": "📖 Pages", "value": str(pages), "inline": True})
     if enrich.get("collection"):
         embed["fields"].append({"name": "📚 Collection", "value": enrich["collection"], "inline": True})
     if enrich.get("cover_url"):
@@ -849,6 +856,7 @@ def check_glenat(state):
                 "serie": enrich.get("serie"),
                 "date_parution": item.get("date"),
                 "prix": enrich.get("prix"),
+                "pages": enrich.get("pages"),
                 "url": item["url"],
                 "cover_url": enrich.get("cover_url"),
                 "announced_at": now,
