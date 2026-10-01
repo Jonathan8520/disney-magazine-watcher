@@ -695,5 +695,37 @@
     "url": "https://direct-editeurs.fr/magazine/15420_picsou-hs-la-nouvelle-jeunesse-de-picsou_1",
     "inducks_url": null,
     "detected_at": "2026-09-17T11:27:03.852275"
+  },
+  "17867": {
+    "name": "SUPER PICSOU GÉANT HS PICSOU DES SOUVENIRS PAR MILLIONS REV",
+    "numero": "1H",
+    "date_mise_en_vente": "01/10/2026",
+    "date_retrait": "04/01/2027",
+    "prix": "6,99 €",
+    "url": "https://direct-editeurs.fr/magazine/17867_super-picsou-geant-hs-picsou-des-souvenirs-par-millions-rev_1",
+    "inducks_url": null,
+    "detected_at": "2026-10-01T09:58:26.271901"
+  },
+  "glenat:9782344079744": {
+    "title": "Les Âges d'or de Mickey - Tome 04",
+    "serie": "Les Âges d'or de Mickey",
+    "date_parution": "20/01/2027",
+    "prix": "19.00",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-mickey-tome-04-9782344079744/",
+    "cover_url": null,
+    "announced_at": "2026-10-01T09:58:27.654879",
+    "released_at": null,
+    "detected_at": "2026-10-01T09:58:27.654879"
+  },
+  "glenat:9782344079751": {
+    "title": "Les Âges d'or de Picsou - Tome 04",
+    "serie": "Les Âges d'or de Picsou",
+    "date_parution": "20/01/2027",
+    "prix": "19.00",
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-picsou-tome-04-9782344079751/",
+    "cover_url": null,
+    "announced_at": "2026-10-01T09:58:27.654879",
+    "released_at": null,
+    "detected_at": "2026-10-01T09:58:27.654879"
   }
 }
