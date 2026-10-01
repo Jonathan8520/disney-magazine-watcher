@@ -92,7 +92,10 @@ OVERRIDES = {
     # ── Super Picsou Géant et déclinaisons ───────────────────────────────────
     "14016": {"name": "Super Picsou Géant",                    "emoji": "🦆", "color": 0xFF8C00, "inducks": ("SPG", 4)},
     "12651": {"name": "SPG HS Dynastie de Picsou",             "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
-    "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜", "inducks": ("SPGHS", 3, "H")},
+    # Pas de lien Inducks : ce codif « REV » est un pack promo de 2 magazines
+    # sous blister (n°3H à 10,90 € avec le tome 5 en façade), numéroté avec son
+    # propre compteur → le numéro ne correspond à aucun original.
+    "15599": {"name": "SPG HS Dynastie de Picsou (REV)",       "emoji": "📜"},
     "12825": {"name": "SPG HS Super Donald Géant",             "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
     "18262": {"name": "SPG HS Super Donald Géant (REV)",       "emoji": "🦆", "inducks": ("SPGHS", 3, "D")},
     "18268": {"name": "SPG HS Donald Double Duck (REV)",       "emoji": "🦹", "inducks": ("DON", 4)},
