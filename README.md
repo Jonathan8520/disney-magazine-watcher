@@ -63,6 +63,8 @@ Dans l'onglet **Actions** → **Disney Magazine Watcher** → **Run workflow**
 - Il compare le numéro actuel avec le dernier connu (stocké dans `state.json` sur la branche `datas`)
 - Pour chaque nouveau numéro détecté, il interroge MLP pour récupérer la date de relève prévisionnelle (« Jusqu'au »)
 - Notification Discord avec titre, numéro, prix, date de parution, date de relève et couverture en grand
+- Quand MLP fournit des visuels supplémentaires (dos, contenu d'un pack, produit offert), ils s'affichent en **galerie** dans le même encadré (jusqu'à 4 images, via des embeds qui partagent le même `url`)
+- Si la couverture n'est pas encore publiée (MLP sert « Visuel en cours de publication »), la notif part sans image et le message est **édité en silence** dès que la vraie couverture arrive (suivi arrêté à la relève)
 - En complément, il surveille les **BD Disney chez Glénat** (voir la section dédiée ci-dessus) sur le même webhook
 - Le `state.json` est automatiquement mis à jour et commité sur la branche `datas` (le code reste propre sur `main`)
 - Throttle 1s + retry automatique sur 429 pour respecter la limite Discord (~5 webhooks/s)

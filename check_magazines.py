@@ -1,3 +1,4 @@
+import hashlib
 import html
 import json
 import os
@@ -186,6 +187,13 @@ GLENAT_INDUCKS = {
 }
 GLENAT_CDN_ORIGINAL = "https://media.hachette.fr/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
 GLENAT_CDN_COVER = "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/{year}/{ean}-001-X.jpeg?source=web"
+
+# Visuel de remplacement MLP « Visuel en cours de publication » (Images/
+# mag_standby.jpg). MLP le sert tant que l'éditeur n'a pas fourni la couverture :
+# reconnu par son URL ou par son empreinte MD5 s'il arrive via display.aspx.
+MLP_STANDBY_MD5 = "5e57069c8efc070b9d881a4d268b54ea"
+# Discord affiche au plus 4 images en galerie dans un même encadré.
+MAX_GALLERY = 4
 
 STATE_FILE = "state.json"
 DISCORD_WEBHOOK = os.environ["DISCORD_WEBHOOK"]
@@ -422,6 +430,16 @@ def fetch_mlp_product(codif):
             if src_m:
                 src = src_m.group(1)
                 cover = src if src.startswith("http") else "https://catalogueproduits.mlp.fr/" + src.lstrip("/")
+        # Visuels supplémentaires (emplacements 2 et 3) : dos, contenu d'un pack,
+        # produit offert… Une clé vide (Key=&Err) = emplacement non rempli.
+        extra_images = []
+        for i in (2, 3):
+            tag = re.search(rf'<img[^>]*id="couverture_{i}"[^>]*>', text)
+            src_m = re.search(r'src="([^"]+)"', tag.group(0)) if tag else None
+            if not src_m or re.search(r"Key=(&|$)", src_m.group(1)):
+                continue
+            src = html.unescape(src_m.group(1))
+            extra_images.append(src if src.startswith("http") else "https://catalogueproduits.mlp.fr/" + src.lstrip("/"))
         # Numéro : extrait juste les chiffres + suffixe alpha (ex N°593H → 593H)
         num_raw = find("_num") or ""
         num_match = re.search(r"(\d+[A-Z]*)", num_raw)
@@ -443,6 +461,7 @@ def fetch_mlp_product(codif):
             "date_retrait": date("spanJs", "spanMs", "spanAs"),
             "prix": find("_prix"),
             "cover_url": cover,
+            "extra_images": extra_images,
             "url": r1.url,
             "slug": "",
             "expired_on": None,
@@ -579,7 +598,57 @@ def build_inducks_url(inducks, numero):
     issue_padded = (prefix + nstr).rjust(pad)
     return "https://inducks.org/issue.php?c=" + quote_plus(f"fr/{code}{issue_padded}")
 
-def send_discord(name, emoji, color, info, inducks_code=None):
+def image_ok(url):
+    """True si l'URL renvoie une vraie image : ni erreur, ni le visuel MLP
+    « Visuel en cours de publication »."""
+    if not url or "mag_standby" in url:
+        return False
+    r = None
+    for attempt in range(2):  # le serveur de couvertures MLP a des ratés passagers
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=20)
+            if r.status_code < 500:
+                break
+        except requests.RequestException:
+            r = None
+        time.sleep(1)
+    if r is None or r.status_code != 200 or not r.headers.get("content-type", "").startswith("image/"):
+        return False
+    return hashlib.md5(r.content).hexdigest() != MLP_STANDBY_MD5
+
+def collect_images(primary, extras):
+    """Image principale = première URL valide de `primary` (DE puis MLP) ;
+    complétée par les visuels supplémentaires valides, sans doublon, jusqu'à
+    MAX_GALLERY. Retourne [] si aucune image principale exploitable."""
+    main = next((u for u in primary if image_ok(u)), None)
+    if not main:
+        return []
+    out = [main]
+    for u in extras:
+        if len(out) >= MAX_GALLERY:
+            break
+        if u and u not in out and image_ok(u):
+            out.append(u)
+    return out
+
+def apply_images(payload, images, page_url, bust=False):
+    """Place les images dans le payload : la 1re dans l'encadré principal, les
+    suivantes dans des embeds « image seule » qui partagent le même `url` →
+    Discord les fusionne en galerie dans l'encadré. `bust` ajoute un paramètre
+    anti-cache (Discord garde en cache l'image déjà vue pour une même URL)."""
+    if bust:
+        tag = f"cb={int(time.time())}"
+        images = [u + ("&" if "?" in u else "?") + tag for u in images]
+    main = payload["embeds"][0]
+    payload["embeds"] = [main]
+    main.pop("image", None)
+    if images:
+        main["image"] = {"url": images[0]}
+        for u in images[1:]:
+            payload["embeds"].append({"url": page_url, "image": {"url": u}})
+    return payload
+
+def send_discord(name, emoji, color, info, inducks_code=None, images=None):
     # Les libellés MLP sont en majuscules et tronqués à 30 caractères
     # ("MEILLEURS DES TRESORS DE PICSO") : quand la source est MLP on préfère le
     # nom d'affichage (override si défini, sinon le libellé brut en repli).
@@ -606,9 +675,6 @@ def send_discord(name, emoji, color, info, inducks_code=None):
         embed["fields"].append({"name": "🗓️ Jusqu'au", "value": info["date_retrait"], "inline": True})
     if info.get("prix"):
         embed["fields"].append({"name": "💶 Prix", "value": info["prix"], "inline": True})
-    if info["cover_url"]:
-        embed["image"] = {"url": info["cover_url"]}
-
     # REV (Remis En Vente) et pochettes = ré-éditions/lots, pas une vraie nouveauté.
     is_rev = bool(re.search(r"\b(REV|POCH(?:ETTE)?)\b", name, re.IGNORECASE))
     headline = "🔁 **Remis en vente !**" if is_rev else "🆕 **Nouveau numéro disponible !**"
@@ -621,8 +687,64 @@ def send_discord(name, emoji, color, info, inducks_code=None):
         "content": f"{headline} — {shown}",
         "embeds": [embed],
     }
-    _post_discord(payload)
-    print(f"  ✅ Notification Discord envoyée pour {name} n°{info['numero']}")
+    if images is None:  # appel sans sélection préalable : comportement historique
+        images = [info["cover_url"]] if info.get("cover_url") else []
+    apply_images(payload, images, info["url"])
+    message_id = _post_discord(payload, wait=True)
+    print(f"  ✅ Notification Discord envoyée pour {name} n°{info['numero']}"
+          + (f" ({len(images)} images)" if len(images) > 1 else ""))
+    return message_id, payload
+
+def reveal_magazine_covers(state, magazines):
+    """Notifs magazines parties sans couverture (MLP servait « Visuel en cours de
+    publication ») : à chaque run, on recherche les images et, dès qu'il y en a
+    une vraie, on ÉDITE le message (aucune nouvelle notif). Suivi abandonné à la
+    relève, si un numéro plus récent est sorti, ou si le message a disparu."""
+    current = {m["codif"]: m for m in magazines}
+    today = datetime.now().date()
+    updated = False
+    for codif, st in state.items():
+        if not codif.isdigit() or not isinstance(st, dict) or not st.get("cover_pending"):
+            continue
+        def _stop(reason):
+            print(f"   ⏹️  {st.get('name')} n°{st.get('numero')} : suivi couverture arrêté ({reason})")
+            for k in ("cover_pending", "pending_payload", "message_id"):
+                st.pop(k, None)
+        retrait = st.get("date_retrait")
+        try:
+            d, m, y = retrait.split("/")
+            expired = datetime(int(y), int(m), int(d)).date() < today
+        except (AttributeError, ValueError):
+            expired = False
+        cur = current.get(codif)
+        if expired or (cur and cur.get("numero") and cur["numero"] != st.get("numero")):
+            _stop("relevé" if expired else "nouveau numéro")
+            updated = True
+            continue
+        base = re.match(r"\d+", st.get("numero") or "")
+        mlp = fetch_mlp_product(codif)
+        mlp_ok = mlp and base and re.match(r"\d+", mlp.get("numero") or "") \
+                 and re.match(r"\d+", mlp["numero"]).group(0) == base.group(0)
+        primary = ([cur.get("cover_url")] if cur else []) + ([mlp.get("cover_url")] if mlp_ok else [])
+        extras = (list(cur.get("extra_images") or []) if cur else []) + (list(mlp.get("extra_images") or []) if mlp_ok else [])
+        images = collect_images(primary, extras)
+        if not images:
+            continue
+        payload = apply_images(st["pending_payload"], images, st["pending_payload"]["embeds"][0]["url"], bust=True)
+        try:
+            _edit_discord(st["message_id"], payload)
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code == 404:
+                _stop("message supprimé")
+                updated = True
+            else:
+                print(f"   ❌ Édition Discord échouée (on réessaiera) : {e}")
+            continue
+        print(f"   ✏️  Couverture ajoutée : {st.get('name')} n°{st.get('numero')} ({len(images)} images)")
+        for k in ("cover_pending", "pending_payload", "message_id"):
+            st.pop(k, None)
+        updated = True
+    return updated
 
 # ── Glénat (BD Disney) ────────────────────────────────────────────────────────
 # Deux événements distincts peuvent notifier pour un même album, parfois à des
@@ -993,7 +1115,8 @@ def main():
         def _num_base(s):
             m = re.match(r"\d+", s or "")
             return m.group(0) if m else None
-        if mlp_info and _num_base(mlp_info.get("numero")) == _num_base(numero):
+        mlp_match = mlp_info if (mlp_info and _num_base(mlp_info.get("numero")) == _num_base(numero)) else None
+        if mlp_match:
             if not info.get("date_retrait"):
                 info["date_retrait"] = mlp_info.get("date_retrait")
             if mlp_info.get("prix"):
@@ -1009,9 +1132,19 @@ def main():
             if datetime(int(y), int(m), int(d)).date() < datetime.now().date():
                 notify = False
                 print(f"  🔇 Périmé ({info['date_retrait']}) — ajouté au state sans notif")
+        message_id = payload = None
+        images = []
         if notify:
+            # Couverture DE (ou MLP pour les titres MLP-only), MLP en secours,
+            # puis les visuels supplémentaires MLP (dos, contenu des packs…).
+            primary = [info.get("cover_url")] + ([mlp_match.get("cover_url")] if mlp_match else [])
+            extras = list(info.get("extra_images") or []) + (list(mlp_match.get("extra_images") or []) if mlp_match else [])
+            images = collect_images(primary, extras)
+            if not images:
+                print("  ⏳ Couverture pas encore publiée — notif sans image, ajout dès qu'elle arrive")
             try:
-                send_discord(name, emoji, color, info, inducks_code=ov.get("inducks"))
+                message_id, payload = send_discord(name, emoji, color, info,
+                                                   inducks_code=ov.get("inducks"), images=images)
             except Exception as e:
                 print(f"  ❌ Erreur Discord : {e}")
                 continue
@@ -1025,10 +1158,22 @@ def main():
             "inducks_url": build_inducks_url(ov.get("inducks"), numero),
             "detected_at": datetime.utcnow().isoformat(),
         }
+        if notify and not images and message_id:
+            # Couverture en attente : on garde de quoi éditer le message plus tard.
+            state[codif].update({"message_id": message_id, "cover_pending": True,
+                                 "pending_payload": payload})
         updated = True
         if notify:
             # Throttle pour rester sous la limite Discord (~5 webhooks/s).
             time.sleep(1)
+
+    # Couvertures arrivées après coup : édition silencieuse des notifs envoyées
+    # sans image. Isolé : une erreur ici ne doit pas faire échouer la run.
+    try:
+        if reveal_magazine_covers(state, magazines):
+            updated = True
+    except Exception as e:
+        print(f"⚠️  Suivi des couvertures ignoré (erreur inattendue) : {e}")
 
     # BD Disney chez Glénat (même webhook, même state.json). Isolé du flux
     # magazines : une erreur ici ne doit jamais faire échouer la run principale.
