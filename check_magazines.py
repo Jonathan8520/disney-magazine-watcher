@@ -696,17 +696,12 @@ def fetch_glenat_product(url, date_fr=None):
         return {}
 
 def build_glenat_payload(item, enrich, kind):
-    """Payload Discord d'un album BD Disney Glénat.
-    kind = 'announced' | 'released' | 'cover' (couverture dévoilée après coup)."""
+    """Payload Discord d'un album BD Disney Glénat. kind = 'announced' | 'released'."""
     title = enrich.get("title") or item["title"] or "BD Disney"
     if kind == "released":
         emoji, color = "📚", 0x009688
         headline = "📚 **BD Disney en librairie !**"
         date_label = "📅 En librairie le"
-    elif kind == "cover":
-        emoji, color = "🖼️", 0x8E24AA
-        headline = "🖼️ **Couverture dévoilée !**"
-        date_label = "🗓️ Parution prévue le"
     else:
         emoji, color = "📆", 0x3F51B5
         headline = "📢 **Nouvelle BD Disney annoncée !**"
@@ -722,7 +717,7 @@ def build_glenat_payload(item, enrich, kind):
     desc = []
     if enrich.get("serie"):
         desc.append(f"*Série : {enrich['serie']}*")
-    if enrich.get("resume") and kind != "cover":  # résumé déjà dans l'annonce
+    if enrich.get("resume"):
         txt = enrich["resume"]
         desc.append(txt[:300] + ("…" if len(txt) > 300 else ""))
     if desc:
@@ -744,16 +739,17 @@ def send_glenat_discord(item, enrich, kind):
     return message_id
 
 def reveal_glenat_covers(state):
-    """Albums annoncés (pas seed/backfill), pas encore sortis et notifiés sans
-    couverture : on sonde le CDN à chaque run. Dès que l'image apparaît, on
-    édite le message d'annonce (si son id est connu) pour y ajouter l'image,
-    sinon on poste une notif « Couverture dévoilée ». Retourne True si le state
-    a changé. Un échec Discord ne stocke rien : on réessaiera au run suivant."""
+    """Annonces parties sans couverture (image pas encore en ligne au moment de
+    l'annonce) : on re-sonde le CDN à chaque run jusqu'à la sortie et, dès que
+    l'image apparaît, on ÉDITE le message d'annonce pour l'ajouter. Aucune
+    nouvelle notification : l'édition d'un message Discord est silencieuse.
+    Sans message_id (annonces antérieures à ce mécanisme), rien à faire.
+    Retourne True si le state a changé."""
     updated = False
     for key, st in state.items():
         if not key.startswith(GLENAT_KEY_PREFIX) or not isinstance(st, dict):
             continue
-        if st.get("released_at") or st.get("cover_url") or st.get("seeded") or st.get("backfilled"):
+        if not st.get("message_id") or st.get("released_at") or st.get("cover_url"):
             continue
         ean = key[len(GLENAT_KEY_PREFIX):]
         if not probe_glenat_cover(ean, st.get("date_parution")):
@@ -763,26 +759,21 @@ def reveal_glenat_covers(state):
         if not enrich.get("cover_url"):
             continue
         item = {"url": st["url"], "title": st.get("title"), "date": st.get("date_parution")}
-        print(f"   🖼️  Couverture dévoilée : {st.get('title')} ({ean})")
-        done = False
-        if st.get("message_id"):
-            try:
-                _edit_discord(st["message_id"], build_glenat_payload(item, enrich, "announced"))
-                print("  ✏️  Message d'annonce mis à jour avec la couverture")
-                done = True
-            except Exception as e:
-                # Message supprimé (404) ou autre : on se rabat sur une notif.
-                print(f"  ⚠️  Édition impossible ({e}) — envoi d'une notif à la place")
-        if not done:
-            try:
-                send_glenat_discord(item, enrich, "cover")
-                done = True
-                time.sleep(1)
-            except Exception as e:
-                print(f"   ❌ Erreur Discord Glénat : {e}")
-        if done:
+        try:
+            _edit_discord(st["message_id"], build_glenat_payload(item, enrich, "announced"))
+            print(f"   ✏️  Couverture ajoutée à l'annonce : {st.get('title')} ({ean})")
             st["cover_url"] = enrich["cover_url"]
             updated = True
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code == 404:
+                # Message supprimé côté Discord : on arrête de le suivre.
+                print(f"   ⚠️  Annonce introuvable sur Discord, suivi abandonné : {st.get('title')}")
+                st["message_id"] = None
+                updated = True
+            else:
+                print(f"   ❌ Édition Discord échouée (on réessaiera) : {e}")
+        except Exception as e:
+            print(f"   ❌ Édition Discord échouée (on réessaiera) : {e}")
     return updated
 
 def check_glenat(state):
