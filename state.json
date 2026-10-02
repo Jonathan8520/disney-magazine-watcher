@@ -81,13 +81,13 @@
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
-    "numero": "26",
-    "date_mise_en_vente": "01/07/2026",
-    "date_retrait": null,
-    "prix": "4.95 €",
-    "url": "https://direct-editeurs.fr/magazine/15935_le-meilleur-du-journal-de-mickey_26",
-    "inducks_url": null,
-    "detected_at": "2026-07-01T05:28:06.676653"
+    "numero": "27",
+    "date_mise_en_vente": "02/10/2026",
+    "date_retrait": "31/12/2026",
+    "prix": "4,95 €",
+    "url": "https://direct-editeurs.fr/magazine/15935_le-meilleur-du-journal-de-mickey_27",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJMC++27",
+    "detected_at": "2026-10-02T08:16:54.164796"
   },
   "14108": {
     "name": "Journal de Mickey HS",
