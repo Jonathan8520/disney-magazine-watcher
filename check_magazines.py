@@ -32,15 +32,23 @@ from zoneinfo import ZoneInfo
 # Les mots-clés génériques ("tresors", "meilleur") ramènent surtout du non-Disney
 # (Trésors de J'aime Lire, Meilleur du Point de Croix…) : ce sont les garde-fous
 # has_disney_marker() / is_disney_mlp() qui les écrèment, sur les deux flux.
+#
+# "castor" : certains titres Castors Juniors ne contiennent ni "picsou" ni
+# "donald" (ex: POCHETTE CASTORS JUNIOR, codif 18433, dont les n°1H à 3H sont
+# passés inaperçus). Forme sans "s" pour matcher singulier et pluriel.
 KEYWORDS = ["picsou", "picso", "mickey", "micke", "mickey hs", "mickey parade",
             "fantomiald", "fantomial", "donald", "donal", "spg", "jdm",
-            "tresors", "meilleur"]
+            "tresors", "meilleur", "castor"]
 
 # Marqueurs Disney recherchés dans le titre et dans la description (panelLog) MLP
 # pour valider qu'un codif inconnu est bien Disney avant de le notifier. Permet
 # d'élargir les KEYWORDS sans craindre de polluer le state avec du non-Disney.
+# "castor junior" et "castors junior" sont tous deux nécessaires : la troncature
+# d'une lettre faite par has_disney_marker() ("castor junio") ne matche pas
+# "castors junior", le "s" se trouvant au milieu.
 DISNEY_MARKERS = (
-    "disney", "picsou", "donald", "mickey", "fantomiald", "castor junior",
+    "disney", "picsou", "donald", "mickey", "fantomiald",
+    "castor junior", "castors junior",
     "trésors de picsou", "tresors de picsou",
 )
 
@@ -57,6 +65,10 @@ SKIP_CODIFS = {
     "15528",  # Mickey Junior
     "14513",  # Mickey Junior HS Jeux
     "18875",  # Mickey Junior HS Baby
+    # Pack promo HS Baby + HS Jeux, sous son propre codif : l'exclusion se fait
+    # codif par codif (pas de filtre sur le nom « Mickey Junior », pour ne pas
+    # risquer d'écarter en silence un futur titre de la ligne qui vaudrait le coup).
+    "18822",  # Pochette Mickey Junior HS Baby Jeux (REV)
 }
 
 # Clé du cache négatif dans state.json : codifs écartés par le garde-fou Disney.
