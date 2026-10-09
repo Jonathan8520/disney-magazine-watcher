@@ -697,14 +697,14 @@
     "detected_at": "2026-09-17T11:27:03.852275"
   },
   "17867": {
-    "name": "SUPER PICSOU GÉANT HS PICSOU DES SOUVENIRS PAR MILLIONS REV",
-    "numero": "1H",
-    "date_mise_en_vente": "01/10/2026",
-    "date_retrait": "04/01/2027",
+    "name": "SPG HS Des souvenirs par millions (REV)",
+    "numero": "2H",
+    "date_mise_en_vente": "09/10/2026",
+    "date_retrait": "12/01/2027",
     "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/17867_super-picsou-geant-hs-picsou-des-souvenirs-par-millions-rev_1",
-    "inducks_url": null,
-    "detected_at": "2026-10-01T09:58:26.271901"
+    "url": "https://direct-editeurs.fr/magazine/17867_super-picsou-geant-hs-picsou-des-souvenirs-par-millions-rev_2",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+P2",
+    "detected_at": "2026-10-09T08:47:37.846789"
   },
   "glenat:9782344079744": {
     "title": "Les Âges d'or de Mickey - Tome 04",
