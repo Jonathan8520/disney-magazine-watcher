@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3876-3877",
-    "date_mise_en_vente": "30/09/2026",
-    "date_retrait": "14/10/2026",
+    "numero": "3878-3879",
+    "date_mise_en_vente": "14/10/2026",
+    "date_retrait": "11/11/2026",
     "prix": "4,90 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3876",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3876-77",
-    "detected_at": "2026-09-30T06:31:14.390793"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3878",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3878-79",
+    "detected_at": "2026-10-14T07:22:13.637065"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -241,13 +241,13 @@
   },
   "13159": {
     "name": "Picsou Magazine",
-    "numero": "596",
-    "date_mise_en_vente": "12/08/2026",
-    "date_retrait": "11/10/2026",
+    "numero": "597",
+    "date_mise_en_vente": "14/10/2026",
+    "date_retrait": "09/12/2026",
     "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_596",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++596",
-    "detected_at": "2026-08-12T06:20:13.795920"
+    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_597",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++597",
+    "detected_at": "2026-10-14T07:22:05.234611"
   },
   "15681": {
     "name": "Picsou Magazine HS Collection Deluxe",
@@ -311,11 +311,13 @@
   },
   "glenat:9782344075210": {
     "title": "Les Âges d'or de Picsou - Tome 03",
-    "date_parution": "23/09/2026",
+    "date_parution": "14/10/2026",
     "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-picsou-tome-03-9782344075210/",
     "announced_at": "2026-06-04T08:56:10.220108",
-    "released_at": null,
-    "seeded": true
+    "released_at": "2026-10-14T07:22:14.863097",
+    "seeded": true,
+    "prix": "19.00",
+    "cover_url": "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/2026/9782344075210-001-X.jpeg?source=web&v=05478fc1930bc365f0122360bf6938ff"
   },
   "glenat:9782344075203": {
     "title": "Les Âges d'or de Mickey - Tome 03",
