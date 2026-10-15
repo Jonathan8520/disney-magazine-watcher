@@ -91,13 +91,13 @@
   },
   "14108": {
     "name": "Journal de Mickey HS",
-    "numero": "12H",
-    "date_mise_en_vente": "14/03/2026",
-    "date_retrait": "12/06/2026",
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/14108_le-journal-de-mickey-hs_12",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJMHSN+12",
-    "detected_at": "2026-05-05T22:25:26.255274"
+    "numero": "13H",
+    "date_mise_en_vente": "15/10/2026",
+    "date_retrait": "18/01/2027",
+    "prix": "6,99 €",
+    "url": "https://direct-editeurs.fr/magazine/14108_le-journal-de-mickey-hs_13",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJMHSN+13",
+    "detected_at": "2026-10-15T07:19:26.244912"
   },
   "18875": {
     "name": "Mickey Junior HS Baby",
