@@ -569,13 +569,13 @@
   },
   "12228": {
     "name": "SUPER PICSOU GÉANT HS DOUBLE DUCK",
-    "numero": "2H",
-    "date_mise_en_vente": "26/08/2026",
-    "date_retrait": null,
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/12228_super-picsou-geant-hs-double-duck_2",
+    "numero": "3H",
+    "date_mise_en_vente": "16/10/2026",
+    "date_retrait": "19/01/2027",
+    "prix": "6,99 €",
+    "url": "https://direct-editeurs.fr/magazine/12228_super-picsou-geant-hs-double-duck_3",
     "inducks_url": null,
-    "detected_at": "2026-08-26T05:40:23.013709"
+    "detected_at": "2026-10-16T06:56:38.828336"
   },
   "glenat:9782344075197": {
     "title": "Les Âges d'or de Donald - Tome 03",
@@ -700,13 +700,13 @@
   },
   "17867": {
     "name": "SPG HS Des souvenirs par millions (REV)",
-    "numero": "2H",
-    "date_mise_en_vente": "09/10/2026",
-    "date_retrait": "12/01/2027",
+    "numero": "3H",
+    "date_mise_en_vente": "16/10/2026",
+    "date_retrait": "19/01/2027",
     "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/17867_super-picsou-geant-hs-picsou-des-souvenirs-par-millions-rev_2",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+P2",
-    "detected_at": "2026-10-09T08:47:37.846789"
+    "url": "https://direct-editeurs.fr/magazine/17867_super-picsou-geant-hs-picsou-des-souvenirs-par-millions-rev_3",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+P3",
+    "detected_at": "2026-10-16T06:56:30.002689"
   },
   "glenat:9782344079744": {
     "title": "Les Âges d'or de Mickey - Tome 04",
