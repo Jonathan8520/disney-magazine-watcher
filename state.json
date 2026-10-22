@@ -609,14 +609,14 @@
     "detected_at": "2026-10-07T08:26:20.845503"
   },
   "12010": {
-    "name": "LE JOURNAL DE MICKEY HS 100 % BD",
-    "numero": "2H",
-    "date_mise_en_vente": "11/09/2026",
-    "date_retrait": "06/11/2026",
+    "name": "Journal de Mickey HS 100% BD",
+    "numero": "3H",
+    "date_mise_en_vente": "22/10/2026",
+    "date_retrait": "17/12/2026",
     "prix": "5,50 €",
-    "url": "https://direct-editeurs.fr/magazine/12010_le-journal-de-mickey-hs-100--bd_2",
-    "inducks_url": null,
-    "detected_at": "2026-09-11T09:29:21.143402"
+    "url": "https://direct-editeurs.fr/magazine/12010_le-journal-de-mickey-hs-100--bd_3",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJMHS100BD+3",
+    "detected_at": "2026-10-22T09:57:34.961138"
   },
   "11047": {
     "name": "LE JOURNAL DE MICKEY HS COLLECTION MYTHOLOGIE REV",
