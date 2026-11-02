@@ -759,5 +759,18 @@
     "url": "https://direct-editeurs.fr/magazine/18433_pochette-castors-junior_3",
     "inducks_url": null,
     "detected_at": "2026-10-07T16:16:14.435809"
+  },
+  "glenat:9782344079768": {
+    "title": "Les Âges d'or de Donald - Tome 04",
+    "serie": "Les Âges d'or de Donald",
+    "date_parution": "24/02/2027",
+    "prix": "19.00",
+    "pages": 216,
+    "url": "https://www.glenat.com/glenat-disney/les-ages-dor-de-donald-tome-04-9782344079768/",
+    "cover_url": "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/2026/9782344079768-001-X.jpeg?source=web",
+    "announced_at": "2026-11-02T10:49:01.296368",
+    "released_at": null,
+    "detected_at": "2026-11-02T10:49:01.296368",
+    "message_id": "1566766083514310740"
   }
 }
