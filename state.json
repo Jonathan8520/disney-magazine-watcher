@@ -71,13 +71,13 @@
   },
   "16096": {
     "name": "Journal de Mickey + Produit",
-    "numero": "3872H",
+    "numero": "3872-3873H",
     "date_mise_en_vente": "02/09/2026",
-    "date_retrait": "01/11/2026",
+    "date_retrait": "04/11/2026",
     "prix": "6,90 €",
-    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872",
+    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872-3873",
     "inducks_url": null,
-    "detected_at": "2026-09-02T08:43:32.466092"
+    "detected_at": "2026-11-04T14:08:44.744702"
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
@@ -281,13 +281,13 @@
   },
   "19052": {
     "name": "Pochette Picsou Magazine",
-    "numero": "2H",
-    "date_mise_en_vente": "08/07/2025",
-    "date_retrait": "06/10/2025",
+    "numero": "3",
+    "date_mise_en_vente": "04/11/2026",
+    "date_retrait": "07/02/2027",
     "prix": "11,90 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=wa%2bYbOzlvIc%3d&par_num=WZWt8yVGzVY%3d",
+    "url": "https://direct-editeurs.fr/magazine/19052_pochette-picsou-magazine-rev_3",
     "inducks_url": null,
-    "detected_at": "2026-05-07T09:40:20.234926"
+    "detected_at": "2026-11-04T14:08:34.844645"
   },
   "12651": {
     "name": "SPG HS Dynastie de Picsou",
