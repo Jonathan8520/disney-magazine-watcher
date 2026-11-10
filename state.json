@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3880-3881",
-    "date_mise_en_vente": "28/10/2026",
-    "date_retrait": "23/12/2026",
-    "prix": "5,90 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3880-3881",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3880-81",
-    "detected_at": "2026-10-28T12:30:28.630215"
+    "numero": "3882-3883",
+    "date_mise_en_vente": "10/11/2026",
+    "date_retrait": "24/11/2026",
+    "prix": "4,90 €",
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3882-3883",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3882-83",
+    "detected_at": "2026-11-10T12:23:04.235186"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -71,13 +71,13 @@
   },
   "16096": {
     "name": "Journal de Mickey + Produit",
-    "numero": "3872-3873H",
+    "numero": "3872H",
     "date_mise_en_vente": "02/09/2026",
     "date_retrait": "04/11/2026",
     "prix": "6,90 €",
-    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872-3873",
+    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872",
     "inducks_url": null,
-    "detected_at": "2026-11-04T14:08:44.744702"
+    "detected_at": "2026-11-10T12:23:09.318693"
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
@@ -141,13 +141,13 @@
   },
   "15190": {
     "name": "Les Chroniques de Fantomiald",
-    "numero": "39",
-    "date_mise_en_vente": "12/08/2026",
-    "date_retrait": "10/11/2026",
+    "numero": "40",
+    "date_mise_en_vente": "10/11/2026",
+    "date_retrait": "08/02/2027",
     "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/15190_les-chroniques-de-fantomiald_39",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FCF+++39",
-    "detected_at": "2026-08-12T06:20:25.226549"
+    "url": "https://direct-editeurs.fr/magazine/15190_les-chroniques-de-fantomiald_40",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FCF+++40",
+    "detected_at": "2026-11-10T12:23:17.788942"
   },
   "18268": {
     "name": "SPG HS Donald Double Duck (REV)",
