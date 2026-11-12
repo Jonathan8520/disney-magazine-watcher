@@ -221,13 +221,13 @@
   },
   "14016": {
     "name": "Super Picsou Géant",
-    "numero": "256",
-    "date_mise_en_vente": "17/09/2026",
-    "date_retrait": null,
-    "prix": "6.99 €",
-    "url": "https://direct-editeurs.fr/magazine/14016_super-picsou-geant_256",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPG+256",
-    "detected_at": "2026-09-17T05:57:03.359977"
+    "numero": "257",
+    "date_mise_en_vente": "12/11/2026",
+    "date_retrait": "11/01/2027",
+    "prix": "6,99 €",
+    "url": "https://direct-editeurs.fr/magazine/14016_super-picsou-geant_257",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPG+257",
+    "detected_at": "2026-11-12T08:07:06.622281"
   },
   "18658": {
     "name": "Picsou Soir",
