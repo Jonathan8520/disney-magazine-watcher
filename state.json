@@ -518,14 +518,14 @@
     "detected_at": "2026-06-08T18:50:34.778801"
   },
   "17112": {
-    "name": "MEILLEUR DU JDM HS NOEL REV",
-    "numero": "1H",
-    "date_mise_en_vente": "19/11/2025",
-    "date_retrait": "18/02/2026",
+    "name": "Le Meilleur du JdM HS Noël (REV)",
+    "numero": "2H",
+    "date_mise_en_vente": "18/11/2026",
+    "date_retrait": "17/02/2027",
     "prix": "6,99 €",
-    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=b%2fkMW31sKvo%3d&par_num=Y8rsBoIKnD8%3d",
-    "inducks_url": null,
-    "detected_at": "2026-06-08T18:50:34.778831"
+    "url": "https://direct-editeurs.fr/magazine/17112_le-meilleur-du-journal-de-mickey-hs-noel-rev_2",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FLMJ+++N2",
+    "detected_at": "2026-11-18T12:52:24.670571"
   },
   "11065": {
     "name": "LES MECHANTS SPG HS",
@@ -634,9 +634,9 @@
     "date_parution": "18/11/2026",
     "prix": "19.00",
     "url": "https://www.glenat.com/glenat-disney/la-grande-histoire-de-picsou-tome-04-9782344075135/",
-    "cover_url": null,
+    "cover_url": "https://media.hachette.fr/fit-in/500x500/imgArticle/GLENAT/2026/9782344075135-001-X.jpeg?source=web&v=239e9a5ca5cfdd2f0eaa7b2ee6a94738",
     "announced_at": "2026-08-03T07:35:15.290161",
-    "released_at": null,
+    "released_at": "2026-11-18T12:52:26.754776",
     "detected_at": "2026-08-03T07:35:15.290161"
   },
   "_not_disney": {
