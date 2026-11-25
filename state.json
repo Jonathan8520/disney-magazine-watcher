@@ -41,13 +41,13 @@
   },
   "14067": {
     "name": "Journal de Mickey",
-    "numero": "3882-3883",
-    "date_mise_en_vente": "10/11/2026",
-    "date_retrait": "24/11/2026",
+    "numero": "3884-3885",
+    "date_mise_en_vente": "25/11/2026",
+    "date_retrait": "09/12/2026",
     "prix": "4,90 €",
-    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3882-3883",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3882-83",
-    "detected_at": "2026-11-10T12:23:04.235186"
+    "url": "https://direct-editeurs.fr/magazine/14067_le-journal-de-mickey_3884-3885",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FJM+3884-85",
+    "detected_at": "2026-11-25T12:26:44.588393"
   },
   "15528": {
     "name": "Mickey Junior",
@@ -71,13 +71,13 @@
   },
   "16096": {
     "name": "Journal de Mickey + Produit",
-    "numero": "3872H",
+    "numero": "3872",
     "date_mise_en_vente": "02/09/2026",
     "date_retrait": "04/11/2026",
     "prix": "6,90 €",
-    "url": "https://direct-editeurs.fr/magazine/16096_le-journal-de-mickey--produit_3872",
+    "url": "https://catalogueproduits.mlp.fr/produit.aspx?tit_code=gcu9U2OdY9k%3d&par_num=5qW9XFIlrYU%3d",
     "inducks_url": null,
-    "detected_at": "2026-11-10T12:23:09.318693"
+    "detected_at": "2026-11-25T12:26:45.588700"
   },
   "15935": {
     "name": "Le Meilleur du Journal de Mickey",
@@ -241,13 +241,13 @@
   },
   "13159": {
     "name": "Picsou Magazine",
-    "numero": "597",
-    "date_mise_en_vente": "14/10/2026",
-    "date_retrait": "09/12/2026",
+    "numero": "598",
+    "date_mise_en_vente": "25/11/2026",
+    "date_retrait": "20/01/2027",
     "prix": "6,99 €",
-    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_597",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++597",
-    "detected_at": "2026-10-14T07:22:05.234611"
+    "url": "https://direct-editeurs.fr/magazine/13159_picsou-magazine_598",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FPM++598",
+    "detected_at": "2026-11-25T12:26:32.811191"
   },
   "15681": {
     "name": "Picsou Magazine HS Collection Deluxe",
@@ -301,13 +301,13 @@
   },
   "13459": {
     "name": "SPG HS Jeux",
-    "numero": "8H",
-    "date_mise_en_vente": "03/07/2026",
-    "date_retrait": "06/10/2026",
+    "numero": "9H",
+    "date_mise_en_vente": "25/11/2026",
+    "date_retrait": "28/02/2027",
     "prix": "5,99 €",
-    "url": "https://direct-editeurs.fr/magazine/13459_super-picsou-geant-hs-jeux_8",
-    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+J8",
-    "detected_at": "2026-07-03T07:30:43.117218"
+    "url": "https://direct-editeurs.fr/magazine/13459_super-picsou-geant-hs-jeux_9",
+    "inducks_url": "https://inducks.org/issue.php?c=fr%2FSPGHS+J9",
+    "detected_at": "2026-11-25T12:26:22.665914"
   },
   "glenat:9782344075210": {
     "title": "Les Âges d'or de Picsou - Tome 03",
